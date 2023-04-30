@@ -54,7 +54,13 @@
 		});
 
 		if (!onServer) {
-			frame(canvas.width, canvas.height, 0, 0);
+			await frame(canvas.width, canvas.height, 0, 0);
+			fadeIn(canvas);
+			fadeIn(noiseOverlay);
+		}
+
+		function fadeIn(elem: HTMLElement) {
+			elem.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
 		}
 
 		async function frame(width: number, height: number, timeAxis: number, count: number) {
@@ -87,10 +93,10 @@
 	});
 </script>
 
-<canvas bind:this={canvas} class="animate-fade fixed w-screen h-screen pointer-events-none -z-10" />
+<canvas bind:this={canvas} class="opacity-0 fixed w-screen h-screen pointer-events-none -z-10" />
 <canvas
 	bind:this={noiseOverlay}
-	class="animate-fade fixed w-screen h-screen pointer-events-none -z-10"
+	class="opacity-0 fixed w-screen h-screen pointer-events-none -z-10"
 />
 
 <div class="font-body">
