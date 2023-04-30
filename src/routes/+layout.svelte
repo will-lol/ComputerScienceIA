@@ -4,17 +4,19 @@
 	import simplexWorkerCreator from './simplexWorker?worker';
 	import noiseWorkerCreator from './noiseWorker?worker';
 
-	let canvas: HTMLCanvasElement;
-	let ctx: CanvasRenderingContext2D;
-	let noiseOverlay: HTMLCanvasElement;
 	let simplexWorker: Worker;
 	let noiseWorker: Worker;
-	let animationController = new AbortController();
+
 	const onServer = typeof process === 'object';
 	if (!onServer) {
 		simplexWorker = new simplexWorkerCreator();
 		noiseWorker = new noiseWorkerCreator();
 	}
+
+	let canvas: HTMLCanvasElement;
+	let ctx: CanvasRenderingContext2D;
+	let noiseOverlay: HTMLCanvasElement;
+	let animationController = new AbortController();
 
 	onMount(async () => {
 		const boundingClientRect = canvas.getBoundingClientRect();
@@ -78,6 +80,7 @@
 	}
 
 	let timeoutID: number;
+	
 	function resize() {
 		clearTimeout(timeoutID);
 		timeoutID = setTimeout(() => {
