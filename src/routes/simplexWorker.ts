@@ -7,7 +7,7 @@ onmessage = (e) => {
 }
 
 function simplex(width: number, height: number, timeAxis: number) {
-    const divider = 70;
+    const divider = (width > 50) ? 70 : 40;
     const img = new Uint8ClampedArray(width * height * 4);
     for (let x = 0; x < width; x++) {
         for (let y = 0; y < height; y++) {

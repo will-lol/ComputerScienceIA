@@ -2,4 +2,4 @@
     export let title: string = "";
 </script>
 
-<span class="text-gray-800 text-center text-6xl font-bold font-display italic">{title}</span>
+<span class="text-gray-800 sm:text-center sm:text-6xl sm:leading-normal text-5xl font-bold font-display italic leading-normal text-left">{title}</span>

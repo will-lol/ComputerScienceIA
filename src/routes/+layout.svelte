@@ -58,7 +58,7 @@
 		}
 
 		async function frame(width: number, height: number, timeAxis: number, count: number) {
-			if (count == 16) {
+			if (count == 10) {
 				const imgData: Promise<Uint8ClampedArray> = new Promise((resolve, reject) => {
 					simplexWorker.postMessage({
 						width: canvas.width,
