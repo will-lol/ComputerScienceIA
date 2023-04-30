@@ -87,7 +87,7 @@
 			animationController.abort();
 			animationController = new AbortController();
 			renderSimplexNoise(ctx, animationController);
-		}, 500)
+		}, 100)
 	}
 
 	async function frame(
