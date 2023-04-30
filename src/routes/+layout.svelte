@@ -37,6 +37,7 @@
 			});
 			img = new ImageData(await imgData, noiseOverlay.width, noiseOverlay.height);
 			noiseCtx.putImageData(img, 0, 0);
+			fadeIn(noiseOverlay);
 		}
 
 		//generate simplex noise and animate
@@ -56,7 +57,6 @@
 		if (!onServer) {
 			await frame(canvas.width, canvas.height, 0, 0);
 			fadeIn(canvas);
-			fadeIn(noiseOverlay);
 		}
 
 		function fadeIn(elem: HTMLElement) {
