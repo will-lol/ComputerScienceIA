@@ -14,60 +14,62 @@
 	}
 
 	let canvas: HTMLCanvasElement;
-	let ctx: CanvasRenderingContext2D;
 	let noiseOverlay: HTMLCanvasElement;
 	let animationController = new AbortController();
 
 	onMount(async () => {
-		const boundingClientRect = canvas.getBoundingClientRect();
-
 		//generate noise overlay
-		const noiseCtx = noiseOverlay.getContext('2d')!;
+		if (!onServer) {
+			renderNoise(noiseOverlay);
+			fadeIn(noiseOverlay);
+		}
+
+		//generate simplex noise and animate
+		const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+		reducedMotionQuery.addEventListener('change', async () => {
+			if (reducedMotionQuery.matches) {
+				animationController.abort();
+				renderSimplexNoise(canvas, animationController);
+			}
+		});
+
+		if (!onServer) {
+			await renderSimplexNoise(canvas, animationController);
+			fadeIn(canvas);
+		}
+	});
+
+	function fadeIn(elem: HTMLElement) {
+		elem.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
+	}
+
+	async function renderNoise(canvas: HTMLCanvasElement) {
+		const boundingClientRect = canvas.getBoundingClientRect();
+		const ctx = canvas.getContext('2d')!;
 		noiseOverlay.height = boundingClientRect.height;
 		noiseOverlay.width = boundingClientRect.width;
 
 		let imgData: Promise<Uint8ClampedArray>;
 		let img: ImageData;
 
-		if (!onServer) {
-			imgData = new Promise((resolve, reject) => {
-				noiseWorker.postMessage({ width: noiseOverlay.width, height: noiseOverlay.height });
-				noiseWorker.onmessage = (e) => {
-					resolve(e.data as Uint8ClampedArray);
-				};
-				noiseWorker.onmessageerror = (e) => {
-					reject();
-				};
-			});
-			img = new ImageData(await imgData, noiseOverlay.width, noiseOverlay.height);
-			noiseCtx.putImageData(img, 0, 0);
-			fadeIn(noiseOverlay);
-		}
-
-		//generate simplex noise and animate
-		ctx = canvas.getContext('2d')!;
-		const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-		reducedMotionQuery.addEventListener('change', async () => {
-			if (reducedMotionQuery.matches) {
-				animationController.abort();
-				renderSimplexNoise(ctx, animationController);
-			}
+		imgData = new Promise((resolve, reject) => {
+			noiseWorker.postMessage({ width: noiseOverlay.width, height: noiseOverlay.height });
+			noiseWorker.onmessage = (e) => {
+				resolve(e.data as Uint8ClampedArray);
+			};
+			noiseWorker.onmessageerror = (e) => {
+				reject();
+			};
 		});
+		img = new ImageData(await imgData, noiseOverlay.width, noiseOverlay.height);
+		ctx.putImageData(img, 0, 0);
+	}
 
-		if (!onServer) {
-			await renderSimplexNoise(ctx, animationController);
-			fadeIn(canvas);
-		}
-
-		function fadeIn(elem: HTMLElement) {
-			elem.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
-		}
-	});
-
-	async function renderSimplexNoise(ctx: CanvasRenderingContext2D, controller: AbortController) {
+	async function renderSimplexNoise(canvas: HTMLCanvasElement, controller: AbortController) {
 		const boundingClientRect = canvas.getBoundingClientRect();
 		canvas.height = boundingClientRect.height / 20;
 		canvas.width = boundingClientRect.width / 20;
+		const ctx = canvas.getContext('2d')!;
 
 		if (!controller.signal.aborted) {
 			const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -80,14 +82,15 @@
 	}
 
 	let timeoutID: number;
-	
+
 	function resize() {
 		clearTimeout(timeoutID);
 		timeoutID = setTimeout(() => {
 			animationController.abort();
 			animationController = new AbortController();
-			renderSimplexNoise(ctx, animationController);
-		}, 100)
+			renderSimplexNoise(canvas, animationController);
+			renderNoise(noiseOverlay);
+		}, 100);
 	}
 
 	async function frame(
