@@ -34,7 +34,7 @@
 		});
 
 		if (!onServer) {
-			await renderSimplexNoise(canvas, animationController);
+			renderSimplexNoise(canvas, animationController);
 			fadeIn(canvas);
 		}
 	});
@@ -58,14 +58,14 @@
 				resolve(e.data as Uint8ClampedArray);
 			};
 			noiseWorker.onmessageerror = (e) => {
-				reject();
+				reject(e);
 			};
 		});
 		img = new ImageData(await imgData, noiseOverlay.width, noiseOverlay.height);
 		ctx.putImageData(img, 0, 0);
 	}
 
-	async function renderSimplexNoise(canvas: HTMLCanvasElement, controller: AbortController) {
+	function renderSimplexNoise(canvas: HTMLCanvasElement, controller: AbortController) {
 		const boundingClientRect = canvas.getBoundingClientRect();
 		canvas.height = boundingClientRect.height / 20;
 		canvas.width = boundingClientRect.width / 20;
@@ -78,7 +78,7 @@
 			}
 		}
 
-		await frame(ctx, canvas.width, canvas.height, 0, 0, controller.signal);
+		frame(ctx, canvas.width, canvas.height, 0, 0, controller.signal);
 	}
 
 	let timeoutID: number;
@@ -86,9 +86,6 @@
 	function resize() {
 		clearTimeout(timeoutID);
 		timeoutID = setTimeout(() => {
-			animationController.abort();
-			animationController = new AbortController();
-			renderSimplexNoise(canvas, animationController);
 			renderNoise(noiseOverlay);
 		}, 100);
 	}
@@ -112,7 +109,7 @@
 					resolve(e.data as Uint8ClampedArray);
 				};
 				simplexWorker.onmessageerror = (e) => {
-					reject();
+					reject(e);
 				};
 			});
 
