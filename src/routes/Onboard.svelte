@@ -3,7 +3,9 @@
 	import OrderedList from '../lib/components/OrderedList.svelte';
 	import Button from '../lib/components/Button.svelte';
 	import Ellipses from '../lib/components/Ellipses.svelte';
-	import TokenReader from "../lib/util/TokenReader";
+	import parseWorkerCreator from './parseWorker?worker';
+	import workerToPromise from '../lib/util/workerToPromise';
+	import type Parser from 'web-tree-sitter';
 
 	let processing: boolean = false;
 
@@ -31,13 +33,8 @@
 	};
 
 	async function parse(file: File) {
-		const buffer = await file.arrayBuffer();
-		const reader = new TokenReader(buffer);
-		
-		for (let i = 0; i < 250000; i++) {
-			reader.read();
-		}
-		console.log("done")
+		const parseWorker = new parseWorkerCreator();
+		console.log(await workerToPromise(parseWorker, await file.text()));
 	}
 </script>
 

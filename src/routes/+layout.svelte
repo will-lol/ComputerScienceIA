@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import simplexWorkerCreator from './simplexWorker?worker';
 	import noiseWorkerCreator from './noiseWorker?worker';
+	import workerToPromise from '../lib/util/workerToPromise';
 
 	let simplexWorker: Worker;
 	let noiseWorker: Worker;
@@ -52,14 +53,9 @@
 		let imgData: Promise<Uint8ClampedArray>;
 		let img: ImageData;
 
-		imgData = new Promise((resolve, reject) => {
-			noiseWorker.postMessage({ width: noiseOverlay.width, height: noiseOverlay.height });
-			noiseWorker.onmessage = (e) => {
-				resolve(e.data as Uint8ClampedArray);
-			};
-			noiseWorker.onmessageerror = (e) => {
-				reject(e);
-			};
+		imgData = workerToPromise(noiseWorker, {
+			width: noiseOverlay.width,
+			height: noiseOverlay.height
 		});
 		img = new ImageData(await imgData, noiseOverlay.width, noiseOverlay.height);
 		ctx.putImageData(img, 0, 0);
@@ -99,18 +95,10 @@
 		signal: AbortSignal
 	) {
 		if (count == 10 || signal.aborted) {
-			const imgData: Promise<Uint8ClampedArray> = new Promise((resolve, reject) => {
-				simplexWorker.postMessage({
-					width: canvas.width,
-					height: canvas.height,
-					timeAxis: timeAxis
-				});
-				simplexWorker.onmessage = (e) => {
-					resolve(e.data as Uint8ClampedArray);
-				};
-				simplexWorker.onmessageerror = (e) => {
-					reject(e);
-				};
+			const imgData: Promise<Uint8ClampedArray> = workerToPromise(simplexWorker, {
+				width: canvas.width,
+				height: canvas.height,
+				timeAxis: timeAxis
 			});
 
 			const img = new ImageData(await imgData, width, height);
