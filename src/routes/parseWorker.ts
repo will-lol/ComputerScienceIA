@@ -19,6 +19,6 @@ async function parse(string: string) {
 	iTunesXMLParser.setLanguage(iTunesXMLLang);
 	const iTunesXML = string;
     const tree = iTunesXMLParser.parse(iTunesXML);
-    console.log(tree.rootNode);
+    console.log(tree.rootNode.child(2)?.children);
 	return "returned";
 }

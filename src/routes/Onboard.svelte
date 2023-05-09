@@ -5,7 +5,6 @@
 	import Ellipses from '../lib/components/Ellipses.svelte';
 	import parseWorkerCreator from './parseWorker?worker';
 	import workerToPromise from '../lib/util/workerToPromise';
-	import type Parser from 'web-tree-sitter';
 
 	let processing: boolean = false;
 
@@ -34,6 +33,8 @@
 
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
+		const blob = new Uint8Array(await file.arrayBuffer());
+		console.log(String.fromCharCode(blob[173]))
 		console.log(await workerToPromise(parseWorker, await file.text()));
 	}
 </script>
