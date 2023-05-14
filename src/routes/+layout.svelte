@@ -74,7 +74,7 @@
 			}
 		}
 
-		await frame(ctx, canvas.width, canvas.height, 0, 0, controller.signal);
+		await frame(ctx, canvas.width, canvas.height, 0, 10, controller.signal);
 	}
 
 	let timeoutID: number;
@@ -106,6 +106,7 @@
 			timeAxis = timeAxis + 0.03;
 			ctx.putImageData(img, 0, 0);
 			count = 0;
+			console.log("end")
 		}
 		if (!signal.aborted) {
 			count++;
