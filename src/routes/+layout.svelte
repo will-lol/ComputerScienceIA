@@ -35,7 +35,7 @@
 		});
 
 		if (!onServer) {
-			renderSimplexNoise(canvas, animationController);
+			await renderSimplexNoise(canvas, animationController);
 			fadeIn(canvas);
 		}
 	});
@@ -61,7 +61,7 @@
 		ctx.putImageData(img, 0, 0);
 	}
 
-	function renderSimplexNoise(canvas: HTMLCanvasElement, controller: AbortController) {
+	async function renderSimplexNoise(canvas: HTMLCanvasElement, controller: AbortController) {
 		const boundingClientRect = canvas.getBoundingClientRect();
 		canvas.height = boundingClientRect.height / 20;
 		canvas.width = boundingClientRect.width / 20;
@@ -74,7 +74,7 @@
 			}
 		}
 
-		frame(ctx, canvas.width, canvas.height, 0, 0, controller.signal);
+		await frame(ctx, canvas.width, canvas.height, 0, 0, controller.signal);
 	}
 
 	let timeoutID: number;

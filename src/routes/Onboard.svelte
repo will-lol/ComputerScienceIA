@@ -6,36 +6,23 @@
 	import parseWorkerCreator from './parseWorker?worker';
 	import workerToPromise from '../lib/util/workerToPromise';
 
-	let processing: boolean = false;
+	let state = "I've saved the file!";
 
 	let files: FileList | undefined;
 	$: if (files != undefined) {
 		if (files[0]) {
-			processing = true;
+			state = "Fetching parser";
 			parse(files[0]);
 		}
 	}
 
-	type metadata = {
-		data: Date;
-	};
-
-	type song = {
-		name: string;
-		artist: string;
-		album: string;
-		genre: string;
-		time: number;
-		playCount: number;
-		skipCount: number;
-		rating?: number;
-	};
-
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
-		const blob = new Uint8Array(await file.arrayBuffer());
-		console.log(String.fromCharCode(blob[173]))
-		console.log(await workerToPromise(parseWorker, await file.text()));
+		state = "Parsing";
+		const data = await workerToPromise(parseWorker, await file.text());
+		state = "Parsed. Redirecting";
+		
+		console.log(data);
 	}
 </script>
 
@@ -47,15 +34,14 @@
 	<ListItem>Save the file</ListItem>
 </OrderedList>
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
-<Button disabled={processing} fullWidth primary absoluteBottom
+<Button disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
 	><label
 		for="file"
 		class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
 	>
-		{#if !processing}
-			I've saved the file!
-		{:else}
-			Processing<Ellipses />
+		{state}
+		{#if state != "I've saved the file!"}
+			<Ellipses />
 		{/if}
 	</label></Button
 >
