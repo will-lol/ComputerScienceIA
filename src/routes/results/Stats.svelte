@@ -19,7 +19,7 @@
 </script>
 
 <div class="grid grid-cols-3 grid-rows-3 w-full">
-	<div class="bg-red-500 h-96 row-span-3" />
+	<div class="bg-red-500 h-screen row-span-3" />
 	<div class="bg-green-500 row-span-3" />
 	<div class="bg-purple-500" />
 	<div class="bg-yellow-500" />

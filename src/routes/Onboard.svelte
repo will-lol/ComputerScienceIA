@@ -29,14 +29,15 @@
 		goto("/results", { replaceState: false });
 	}
 </script>
-
-<OrderedList>
-	<ListItem>Open the Apple Music app on your Mac</ListItem>
-	<ListItem>Find the menu bar item 'File'</ListItem>
-	<ListItem>Go to 'Library'</ListItem>
-	<ListItem>Click 'Export Library...'</ListItem>
-	<ListItem>Save the file</ListItem>
-</OrderedList>
+<div class="sm:my-20">
+	<OrderedList>
+		<ListItem>Open the Apple Music app on your Mac</ListItem>
+		<ListItem>Find the menu bar item 'File'</ListItem>
+		<ListItem>Go to 'Library'</ListItem>
+		<ListItem>Click 'Export Library...'</ListItem>
+		<ListItem>Save the file</ListItem>
+	</OrderedList>	
+</div>
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
 <Button disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
 	><label
