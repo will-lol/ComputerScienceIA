@@ -4,12 +4,12 @@
 	import simplexWorkerCreator from './simplexWorker?worker';
 	import noiseWorkerCreator from './noiseWorker?worker';
 	import workerToPromise from '../lib/util/workerToPromise';
+	import isServer from '../lib/util/isServer';
 
 	let simplexWorker: Worker;
 	let noiseWorker: Worker;
 
-	const onServer = typeof process === 'object';
-	if (!onServer) {
+	if (!isServer()) {
 		simplexWorker = new simplexWorkerCreator();
 		noiseWorker = new noiseWorkerCreator();
 	}
@@ -20,7 +20,7 @@
 
 	onMount(async () => {
 		//generate noise overlay
-		if (!onServer) {
+		if (!isServer()) {
 			renderNoise(noiseOverlay);
 			fadeIn(noiseOverlay);
 		}
@@ -34,7 +34,7 @@
 			}
 		});
 
-		if (!onServer) {
+		if (!isServer()) {
 			await renderSimplexNoise(canvas, animationController);
 			fadeIn(canvas);
 		}
@@ -74,7 +74,7 @@
 			}
 		}
 
-		await frame(ctx, canvas.width, canvas.height, 0, 10, controller.signal);
+		await frame(ctx, canvas.width, canvas.height, 0, 20, controller.signal);
 	}
 
 	let timeoutID: number;
@@ -94,7 +94,7 @@
 		count: number,
 		signal: AbortSignal
 	) {
-		if (count == 10 || signal.aborted) {
+		if (count == 20 || signal.aborted) {
 			const imgData: Promise<Uint8ClampedArray> = workerToPromise(simplexWorker, {
 				width: canvas.width,
 				height: canvas.height,
@@ -103,10 +103,9 @@
 
 			const img = new ImageData(await imgData, width, height);
 
-			timeAxis = timeAxis + 0.03;
+			timeAxis = timeAxis + 0.01;
 			ctx.putImageData(img, 0, 0);
 			count = 0;
-			console.log("end")
 		}
 		if (!signal.aborted) {
 			count++;

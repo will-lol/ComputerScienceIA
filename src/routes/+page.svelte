@@ -6,7 +6,7 @@
 </script>
 
 <Page>
-	<Title title="Easily generate iPod listening statistics" />
+	<Title>Easily generate iPod listening statistics</Title>
 	<Content>
 		<Onboard/>
 	</Content>

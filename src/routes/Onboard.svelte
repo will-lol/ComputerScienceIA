@@ -5,24 +5,28 @@
 	import Ellipses from '../lib/components/Ellipses.svelte';
 	import parseWorkerCreator from './parseWorker?worker';
 	import workerToPromise from '../lib/util/workerToPromise';
+	import { dataStore } from './stores';
+	import { goto } from '$app/navigation';
+	import type { dataPackage } from './parseWorker';
 
 	let state = "I've saved the file!";
 
 	let files: FileList | undefined;
 	$: if (files != undefined) {
 		if (files[0]) {
-			state = "Fetching parser";
+			state = 'Fetching parser';
 			parse(files[0]);
 		}
 	}
 
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
-		state = "Parsing";
-		const data = await workerToPromise(parseWorker, await file.text());
-		state = "Parsed. Redirecting";
-		
-		console.log(data);
+		state = 'Parsing';
+		const data = await workerToPromise(parseWorker, await file.text()) as dataPackage;
+		dataStore.set(data);
+		globalThis.localStorage.setItem("data", JSON.stringify(data));
+		state = 'Parsed. Redirecting';
+		goto("/results", { replaceState: false });
 	}
 </script>
 

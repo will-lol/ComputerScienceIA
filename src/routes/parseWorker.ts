@@ -1,6 +1,6 @@
 import iTunesXMLLangURL from '../lib/tree-sitter-iTunesXML.wasm?url';
 import TreeSitterWasmURL from '../lib/tree-sitter.wasm?url';
-import Parser, { type TreeCursor } from 'web-tree-sitter';
+import Parser from 'web-tree-sitter';
 import { base64 } from 'rfc4648';
 
 type metadata = {
@@ -18,7 +18,7 @@ type song = {
 	rating: number | undefined;
 };
 
-type dataPackage = {
+export type dataPackage = {
 	metadata: metadata,
 	songs: song[]
 }
