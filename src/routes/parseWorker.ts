@@ -7,7 +7,7 @@ type metadata = {
 	date: Date;
 };
 
-type song = {
+export type song = {
 	name: string | undefined;
 	artist: string | undefined;
 	album: string | undefined;
