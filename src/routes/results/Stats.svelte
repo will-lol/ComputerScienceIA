@@ -3,8 +3,10 @@
 	import type { dataPackage, song } from '../parseWorker';
 	import isServer from '../../lib/util/isServer';
 	import BinarySearchTree from '../../lib/util/binarySearchTree';
+	import Song from '../../lib/components/Song.svelte';
 
 	let data: dataPackage | undefined = undefined;
+	let topTracks: song[] = [];
 	if (!isServer()) {
 		dataStore.subscribe((value) => (data = value));
 		if (!data) {
@@ -18,10 +20,25 @@
 		}
 		const songArray = data.songs;
 		function songPlayComparator(songOne: song, songTwo: song) {
-			if (songOne.playCount == undefined || songTwo.playCount == undefined) {
-				return 0;
+			let one = songOne.playCount;
+			let two = songTwo.playCount;
+			let oneRating = songOne.rating;
+			let twoRating = songTwo.rating;
+			if (one == undefined) {
+				one = 0;
+			} 
+			if (two == undefined) {
+				two = 0;
 			}
-			return songOne.playCount - songTwo.playCount;
+
+			if (oneRating == undefined) {
+				oneRating = 2.5;
+			} 
+			if (twoRating == undefined) {
+				twoRating = 2.5;
+			}
+
+			return (two * twoRating) - (one * oneRating);
 		}
 		const playTree = new BinarySearchTree(songPlayComparator);
 		let totalTime = 0;
@@ -31,35 +48,35 @@
 				totalTime += song.playCount * song.time;
 			}
 		}
-		console.log(playTree.inOrderTraverse(5));
+		topTracks = playTree.inOrderTraverse(50);
 	}
 
-	async function getAlbumArtURL(albumName: string, artistName: string) {
-		const query = `artist:${artistName} AND release-group:${albumName}`;
-		let albumId: string;
-		try {
-			albumId = await fetch(
-				`https://musicbrainz.org/ws/2/release-group?query=${encodeURIComponent(query)}&fmt=json`
-			).then((res) => res.json().then((res) => res['release-groups'][0].id));
-		} catch {
-			throw 'album not found';
+	function removeAmbiguity(string: string | undefined): string {
+		if (string == undefined) {
+			return "";
+		} else {
+			return string;
 		}
-		let albumArtURL;
-		try {
-			albumArtURL = await fetch(`https://coverartarchive.org/release-group/${albumId}`).then(
-				(res) => res.json().then((res) => res.images[0].thumbnails['250'])
-			);
-		} catch {
-			throw 'album art not found';
-		}
-		return albumArtURL;
 	}
 </script>
 
-<div class="grid sm:grid-cols-3 grid-rows-3 w-full">
-	<div class="row-span-3">iPod</div>
-	<div class="row-span-3">Top tracks</div>
-	<div class="">Top albums</div>
-	<div class="">Top artists</div>
-	<div class="">Overall</div>
+<div class="grid sm:grid-cols-3 grid-rows-3 w-full gap-4">
+	<div class="row-span-3">
+		iPod
+	</div>
+	<div class="row-span-3">
+		<h2 class="text-sm mb-2">Top tracks</h2>
+		{#each topTracks as track, i}
+			<Song num={i+1} songArtist={removeAmbiguity(track.artist)} songTitle={removeAmbiguity(track.name)} songAlbum={removeAmbiguity(track.album)}></Song>
+		{/each}
+	</div>
+	<div class="">
+		<h2 class="text-sm mb-2">Top albums</h2>
+	</div>
+	<div class="">
+		<h2 class="text-sm mb-2">Top artists</h2>
+	</div>
+	<div class="">
+		<h2 class="text-sm mb-2">Overall</h2>
+	</div>
 </div>

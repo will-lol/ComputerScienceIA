@@ -5,9 +5,13 @@ export default {
   theme: {
     fontFamily: {
       'display': ["Libre Baskerville", "Baskerville", "Times New Roman"],
-      'body': ["Libre Franklin", "Helvetica", "Arial"]
+      'body': ["Libre Franklin", "Helvetica", "Arial"],
+      'mono': ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", '"Liberation Mono"', '"Courier New"', "monospace"]
     },
     extend: {
+      boxShadow: {
+        'xs': '0 0.15rem 0 0px rgba(0,0,0,0.2)'
+      },
       animation: {
         'fade': '1s ease-in-out 2s 1 normal both running fadeIn'
       },
