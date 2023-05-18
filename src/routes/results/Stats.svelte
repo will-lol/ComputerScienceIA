@@ -19,7 +19,14 @@
 			}
 		}
 		const songArray = data.songs;
-		function songPlayComparator(songOne: song, songTwo: song) {
+		let rating = 0;
+		for (const song of songArray) {
+			if (song.rating != undefined) {
+				rating++
+			}
+		}
+		const ratingRatio = rating/songArray.length;
+		function songComparatorRating(songOne: song, songTwo: song) {
 			let one = songOne.playCount;
 			let two = songTwo.playCount;
 			let oneRating = songOne.rating;
@@ -33,7 +40,20 @@
 
 			return (two * ratingDefault(twoRating)/20) - (one * ratingDefault(oneRating)/20);
 		}
-		const playTree = new BinarySearchTree(songPlayComparator);
+
+		function songComparatorPlay(songOne: song, songTwo: song) {
+			let one = songOne.playCount;
+			let two = songTwo.playCount;
+			if (one == undefined) {
+				one = 0;
+			} 
+			if (two == undefined) {
+				two = 0;
+			}
+
+			return (two) - (one);
+		}
+		const playTree = new BinarySearchTree(ratingRatio > 0.5 ? songComparatorRating : songComparatorPlay);
 		let totalTime = 0;
 		for (const song of songArray) {
 			playTree.insert(song);
@@ -64,7 +84,7 @@
 		if (thing == undefined) {
 			return 2.5;
 		} else {
-			return thing;
+			return thing/20;
 		}
 	}
 </script>

@@ -31,34 +31,36 @@
 				>&#160;plays</span
 			>
 		</div>
-		<div class="flex">
-            <svg class="hidden">
-                <path   id="star"
-						d="M16 1L19.5922 12.0557H31.2169L21.8123 18.8885L25.4046 29.9443L16 23.1115L6.59544 29.9443L10.1877 18.8885L0.783095 12.0557H12.4078L16 1Z"
-					/>
-            </svg>
-			{#each { length: 5 - (rating == undefined ? 0 : rating) / 20 } as _}
-				<svg
-					width="14"
-					height="14"
-					viewBox="0 0 32 32"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<use href="#star" fill="#CCC"></use>
+		{#if rating != undefined}
+			<div class="flex">
+				<svg class="hidden">
+					<path   id="star"
+							d="M16 1L19.5922 12.0557H31.2169L21.8123 18.8885L25.4046 29.9443L16 23.1115L6.59544 29.9443L10.1877 18.8885L0.783095 12.0557H12.4078L16 1Z"
+						/>
 				</svg>
-			{/each}
-			{#each { length: (rating == undefined ? 0 : rating) / 20 } as _}
-				<svg
-					width="14"
-					height="14"
-					viewBox="0 0 32 32"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-                    <use href="#star" fill="#000"></use>
-				</svg>
-			{/each}
-		</div>
+				{#each { length: 5 - rating/20 } as _}
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 32 32"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<use href="#star" fill="#CCC"></use>
+					</svg>
+				{/each}
+				{#each { length: rating/20 } as _}
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 32 32"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<use href="#star" fill="#000"></use>
+					</svg>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
