@@ -8,7 +8,7 @@
     let imageSource = new URL(globalThis.location.origin + "/api/albumArt");
     imageSource.searchParams.set("album", songAlbum);
     imageSource.searchParams.set("artist", songArtist);
-
+    
 
 </script>
 
