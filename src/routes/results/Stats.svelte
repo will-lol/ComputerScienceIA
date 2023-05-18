@@ -31,14 +31,7 @@
 				two = 0;
 			}
 
-			if (oneRating == undefined) {
-				oneRating = 2.5;
-			} 
-			if (twoRating == undefined) {
-				twoRating = 2.5;
-			}
-
-			return (two * twoRating) - (one * oneRating);
+			return (two * ratingDefault(twoRating)) - (one * ratingDefault(oneRating));
 		}
 		const playTree = new BinarySearchTree(songPlayComparator);
 		let totalTime = 0;
@@ -48,26 +41,42 @@
 				totalTime += song.playCount * song.time;
 			}
 		}
-		topTracks = playTree.inOrderTraverse(100);
+		topTracks = playTree.inOrderTraverse(10);
 	}
 
-	function removeAmbiguity(string: string | undefined): string {
-		if (string == undefined) {
+	function stringDefault(thing: string | undefined): string {
+		if (thing == undefined) {
 			return "";
 		} else {
-			return string;
+			return thing;
+		}
+	}
+
+	function numberDefault(thing: number | undefined): number {
+		if (thing == undefined) {
+			return 0;
+		} else {
+			return thing;
+		}
+	}
+
+	function ratingDefault(thing: number | undefined): number {
+		if (thing == undefined) {
+			return 2.5;
+		} else {
+			return thing;
 		}
 	}
 </script>
 
-<div class="grid sm:grid-cols-3 grid-rows-3 w-full gap-4">
+<div class="grid lg:grid-cols-[auto_auto_auto] grid-rows-3 w-full gap-4">
 	<div class="row-span-3">
 		<h2 class="text-sm mb-2">iPod</h2> 
 	</div>
 	<div class="row-span-3">
 		<h2 class="text-sm mb-2">Top tracks</h2>
 		{#each topTracks as track, i}
-			<Song num={i+1} songArtist={removeAmbiguity(track.artist)} songTitle={removeAmbiguity(track.name)} songAlbum={removeAmbiguity(track.album)}></Song>
+			<Song rating={track.rating} plays={numberDefault(track.playCount)} num={i+1} songArtist={stringDefault(track.artist)} songTitle={stringDefault(track.name)} songAlbum={stringDefault(track.album)}></Song>
 		{/each}
 	</div>
 	<div class="">
