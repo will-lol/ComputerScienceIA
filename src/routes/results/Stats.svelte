@@ -38,7 +38,7 @@
 		for (const song of songArray) {
 			playTree.insert(song);
 			if (song.playCount && song.time) {
-				totalTime += song.playCount * song.time;
+				totalTime += (song.playCount * 0.5) * song.time;
 			}
 		}
 		topTracks = playTree.inOrderTraverse(10);
