@@ -31,14 +31,14 @@
 				two = 0;
 			}
 
-			return (two * ratingDefault(twoRating)) - (one * ratingDefault(oneRating));
+			return (two * ratingDefault(twoRating)/20) - (one * ratingDefault(oneRating)/20);
 		}
 		const playTree = new BinarySearchTree(songPlayComparator);
 		let totalTime = 0;
 		for (const song of songArray) {
 			playTree.insert(song);
 			if (song.playCount && song.time) {
-				totalTime += (song.playCount * 0.5) * song.time;
+				totalTime += song.playCount * song.time;
 			}
 		}
 		topTracks = playTree.inOrderTraverse(10);
