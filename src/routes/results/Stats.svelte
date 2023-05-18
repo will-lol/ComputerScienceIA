@@ -38,7 +38,7 @@
 				two = 0;
 			}
 
-			return (two * ratingDefault(twoRating)/20) - (one * ratingDefault(oneRating)/20);
+			return (two * ratingDefault(twoRating)) - (one * ratingDefault(oneRating));
 		}
 
 		function songComparatorPlay(songOne: song, songTwo: song) {
@@ -53,7 +53,12 @@
 
 			return (two) - (one);
 		}
-		const playTree = new BinarySearchTree(ratingRatio > 0.5 ? songComparatorRating : songComparatorPlay);
+		let playTree: BinarySearchTree<song>;
+		if (ratingRatio > 0.3) {
+			playTree = new BinarySearchTree(songComparatorRating);
+		} else {
+			playTree = new BinarySearchTree(songComparatorPlay);
+		}
 		let totalTime = 0;
 		for (const song of songArray) {
 			playTree.insert(song);
