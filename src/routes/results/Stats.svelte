@@ -62,7 +62,7 @@
 
 <div class="grid sm:grid-cols-3 grid-rows-3 w-full gap-4">
 	<div class="row-span-3">
-		iPod
+		<h2 class="text-sm mb-2">iPod</h2> 
 	</div>
 	<div class="row-span-3">
 		<h2 class="text-sm mb-2">Top tracks</h2>
