@@ -31,7 +31,8 @@
 	font-family: 'IBM Plex Mono';
 	font-style: normal;
 	font-weight: 400;
-	src: url('./lib/fonts/IBMPlexMono-Regular.woff2') format('woff2');
+	src: url('./lib/fonts/IBMPlexMono-Regular-subset.woff2') format('woff2');
+	unicode-range: U+30-39;
 }
 
 @font-face {
