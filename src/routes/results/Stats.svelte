@@ -66,7 +66,7 @@
 				totalTime += song.playCount * song.time;
 			}
 		}
-		topTracks = playTree.inOrderTraverse(1000);
+		topTracks = playTree.inOrderTraverse(20);
 	}
 
 	function stringDefault(thing: string | undefined): string {
