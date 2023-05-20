@@ -23,6 +23,9 @@ export const GET = (async ({ url }) => {
 
 async function releaseGroupQuery(albumName: string, artistName: string) {
 	const query = `artist:${artistName} AND release-group:${albumName}`;
+	console.log(
+		`https://musicbrainz.org/ws/2/release-group?query=${encodeURIComponent(query)}&fmt=json`
+	);
 	const searchResults = await fetch(
 		`https://musicbrainz.org/ws/2/release-group?query=${encodeURIComponent(query)}&fmt=json`
 	)
@@ -31,9 +34,8 @@ async function releaseGroupQuery(albumName: string, artistName: string) {
 			throw 'couldnt connect to search results';
 		});
 	if (searchResults.count > 0) {
-		return searchResults['release-groups'][0].id;
+		return searchResults['release-groups'];
 	} else {
-		console.log('UHOH');
 		throw 'album not found';
 	}
 }
@@ -48,7 +50,7 @@ async function releaseQuery(albumName: string, artistName: string) {
 			throw 'couldnt connect to search results';
 		});
 	if (searchResults.count > 0) {
-		return searchResults.releases[0].id;
+		return searchResults.releases;
 	} else {
 		throw 'album not found';
 	}
@@ -57,23 +59,23 @@ async function releaseQuery(albumName: string, artistName: string) {
 async function getAlbumArtURL(albumName: string, artistName: string) {
 	let albumArtURL: string;
 	try {
-		console.log('first');
 		let albumId = await releaseQuery(albumName, artistName).catch(() => {
 			throw 'album not found';
 		});
-		albumArtURL = await fetch(`https://coverartarchive.org/release/${albumId}`).then((res) =>
+		albumArtURL = await fetch(`https://coverartarchive.org/release/${albumId[0].id}`).then((res) =>
 			res.json().then((res) => res.images[0].thumbnails.small)
 		);
 	} catch {
-		console.log('hi');
 		let albumId = await releaseGroupQuery(albumName, artistName).catch(() => {
 			throw 'album not found';
 		});
-		albumArtURL = await fetch(`https://coverartarchive.org/release-group/${albumId}`)
+		albumArtURL = await fetch(`https://coverartarchive.org/release-group/${albumId[0].id}`)
 			.then((res) => res.json().then((res) => res.images[0].thumbnails.small))
-			.catch(() => {
-				throw 'album art not found';
-			});
+			.catch(() =>
+				fetch(`https://coverartarchive.org/release-group/${albumId[1].id}`).catch(() => {
+					throw 'album not found';
+				})
+			);
 	}
 	return albumArtURL;
 }
