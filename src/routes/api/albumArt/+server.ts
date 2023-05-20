@@ -23,9 +23,6 @@ export const GET = (async ({ url }) => {
 
 async function releaseGroupQuery(albumName: string, artistName: string) {
 	const query = `artist:${artistName} AND release-group:${albumName}`;
-	console.log(
-		`https://musicbrainz.org/ws/2/release-group?query=${encodeURIComponent(query)}&fmt=json`
-	);
 	const searchResults = await fetch(
 		`https://musicbrainz.org/ws/2/release-group?query=${encodeURIComponent(query)}&fmt=json`
 	)
@@ -59,23 +56,30 @@ async function releaseQuery(albumName: string, artistName: string) {
 async function getAlbumArtURL(albumName: string, artistName: string) {
 	let albumArtURL: string;
 	try {
-		let albumId = await releaseQuery(albumName, artistName).catch(() => {
+		const albumId = await releaseQuery(albumName, artistName).catch(() => {
 			throw 'album not found';
 		});
-		albumArtURL = await fetch(`https://coverartarchive.org/release/${albumId[0].id}`).then((res) =>
-			res.json().then((res) => res.images[0].thumbnails.small)
-		);
+		albumArtURL = await fetchAlbumArtUrl(albumId, 'release').catch(() => {throw 'album not found'});
 	} catch {
-		let albumId = await releaseGroupQuery(albumName, artistName).catch(() => {
+		const albumId = await releaseGroupQuery(albumName, artistName).catch(() => {
 			throw 'album not found';
 		});
-		albumArtURL = await fetch(`https://coverartarchive.org/release-group/${albumId[0].id}`)
-			.then((res) => res.json().then((res) => res.images[0].thumbnails.small))
-			.catch(() =>
-				fetch(`https://coverartarchive.org/release-group/${albumId[1].id}`).catch(() => {
-					throw 'album not found';
-				})
-			);
+		console.log(albumName);
+		albumArtURL = await fetchAlbumArtUrl(albumId, 'release-group').catch(() => {throw 'album not found'});
 	}
 	return albumArtURL;
+}
+
+async function fetchAlbumArtUrl(albumArr: any, type: string) {
+	if (albumArr.length > 0) {
+		for (let i = 0; i < (albumArr.length > 2 ? 2 : albumArr.length); i++) {
+			try {
+				console.log(albumArr);
+				let albumArtURL = await fetch(`https://coverartarchive.org/${type}/${albumArr[0].id}`)
+				.then((res) => res.json().then((res) => res.images[0].thumbnails.small))
+				return albumArtURL;
+			} catch {}
+		}
+		throw ('album art not found')
+	}
 }
