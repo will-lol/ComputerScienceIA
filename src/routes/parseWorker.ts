@@ -18,6 +18,12 @@ export type song = {
 	rating: number | undefined;
 };
 
+export type album = {
+	name: string | undefined;
+	artist: string | undefined;
+	plays: number | undefined;
+}
+
 export type dataPackage = {
 	metadata: metadata,
 	songs: song[]

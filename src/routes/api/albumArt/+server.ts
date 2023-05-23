@@ -64,7 +64,6 @@ async function getAlbumArtURL(albumName: string, artistName: string) {
 		const albumId = await releaseGroupQuery(albumName, artistName).catch(() => {
 			throw 'album not found';
 		});
-		console.log(albumName);
 		albumArtURL = await fetchAlbumArtUrl(albumId, 'release-group').catch(() => {throw 'album not found'});
 	}
 	return albumArtURL;
@@ -74,7 +73,6 @@ async function fetchAlbumArtUrl(albumArr: any, type: string) {
 	if (albumArr.length > 0) {
 		for (let i = 0; i < (albumArr.length > 2 ? 2 : albumArr.length); i++) {
 			try {
-				console.log(albumArr);
 				let albumArtURL = await fetch(`https://coverartarchive.org/${type}/${albumArr[0].id}`)
 				.then((res) => res.json().then((res) => res.images[0].thumbnails.small))
 				return albumArtURL;

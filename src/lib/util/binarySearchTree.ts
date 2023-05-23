@@ -48,24 +48,24 @@ export default class BinarySearchTree<T> {
 		this.size++;
 	}
 
-	search(query: T): { success: boolean; data?: T } {
+	search(query: T): T | undefined {
 		if (this.root == null) {
-			return { success: false };
+			return undefined;
 		}
 		let currentNode = this.root;
 		while (true) {
 			const comparison = this.comparator(query, currentNode.data);
 			if (comparison == 0) {
-				return { success: true, data: currentNode.data };
+				return currentNode.data;
 			}
 			if (comparison > 0) {
 				if (currentNode.right == null) {
-					return { success: false };
+					return undefined;
 				}
 				currentNode = currentNode.right;
 			} else {
 				if (currentNode.left == null) {
-					return { success: false };
+					return undefined;
 				}
 				currentNode = currentNode.left;
 			}
@@ -97,8 +97,7 @@ export default class BinarySearchTree<T> {
 
 			if (currentNode.left != null && !isVisited[currentNode.left.id]) {
 				currentNode = currentNode.left;
-			} else if (
-				currentNode.parent != null &&
+			} else if (currentNode.parent != null &&
 				!isVisited[currentNode.parent.id] &&
 				(currentNode.right == null || isVisited[currentNode.right.id])
 			) {
@@ -111,6 +110,30 @@ export default class BinarySearchTree<T> {
 		}
 
 		return array;
+	}
+
+	copyTo(newTree: BinarySearchTree<T>)  {
+		const prevNodeWithRightStack: Node<T>[] = [];
+		let num = 0;
+		if (this.root == null) {
+			return;
+		}
+		let currentNode: Node<T> = this.root;
+		while (num != this.size) {
+			if (currentNode.right != null) {
+				prevNodeWithRightStack.push(currentNode);
+			}
+			newTree.insert(currentNode.data);
+			if (currentNode.left) {
+				currentNode = currentNode.left;
+			} else {
+				const lastNodeWithRight = prevNodeWithRightStack.pop();
+				if (lastNodeWithRight == undefined) {
+					return;
+				}
+				currentNode = lastNodeWithRight.right!;
+			}
+		}
 	}
 }
 
