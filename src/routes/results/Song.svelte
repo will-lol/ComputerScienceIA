@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="mb-2 min-w-[10rem] border border-solid border-gray-300 w-full flex items-center px-4 py-2 rounded shadow bg-gray-50"
+	class="mb-2 min-w-[10rem] border border-solid bg-opacity-75 border-gray-300 w-full flex items-center px-4 py-2 rounded shadow bg-gray-50"
 >
 	<span class="pr-4 text-gray-500 font-mono">{padNum(num, 2)}</span>
 	<img

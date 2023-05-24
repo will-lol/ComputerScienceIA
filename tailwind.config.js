@@ -6,7 +6,8 @@ export default {
     fontFamily: {
       'display': ["Libre Baskerville", "Baskerville", "Times New Roman"],
       'body': ["Libre Franklin", "Helvetica", "Arial"],
-      'mono': ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", '"Liberation Mono"', '"Courier New"', "monospace"]
+      'mono': ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", '"Liberation Mono"', '"Courier New"', "monospace"],
+      'ipod': ["'Myriad'", "'Myraid Pro'", "'Noto Sans'"]
     },
     extend: {
       boxShadow: {
@@ -22,6 +23,10 @@ export default {
         }
       },
       colors: {
+        'praiseTheSun': '#f4f3d8'
+      },
+      aspectRatio: {
+        'ipod': '2.4 / 4.1'
       }
     },
   },
