@@ -193,35 +193,43 @@
 </script>
 
 <div class="grid lg:grid-cols-[auto_auto_auto] w-full gap-4">
-	<div class="row-span-3 flex">
-		<div class="sticky top-5 w-full">
-			<h2 class="text-sm mb-2">iPod</h2>
-			<IPod/>	
+	<div class="flex">
+		<div class="w-full">
+			<h2 class="text-sm mb-1">iPod</h2>
+			<IPod />
 		</div>
 	</div>
-	<div class="row-span-3">
-		<h2 class="text-sm mb-2">Top tracks</h2>
-		{#each topTracks as track, i}
-			<Song
-				rating={track.rating}
-				plays={playCountDefault(track.playCount)}
-				num={i + 1}
-				songArtist={stringDefault(track.artist)}
-				songTitle={stringDefault(track.name)}
-				songAlbum={stringDefault(track.album)}
+	<div>
+		<h2 class="text-sm mb-1">Top tracks</h2>
+		<div class="flex flex-col gap-2">
+			{#each topTracks as track, i}
+				<Song
+					rating={track.rating}
+					plays={playCountDefault(track.playCount)}
+					num={i + 1}
+					songArtist={stringDefault(track.artist)}
+					songTitle={stringDefault(track.name)}
+					songAlbum={stringDefault(track.album)}
+				/>
+			{/each}
+		</div>	
+	</div>
+	<div class="flex flex-col gap-2">
+		<div>
+			<h2 class="text-sm mb-1">Top albums</h2>
+			<TopAlbums albums={topAlbums} />
+		</div>
+		<div>
+			<h2 class="text-sm mb-1">Top artists</h2>
+			<TopArtists artists={topArtists} />
+		</div>
+		<div>
+			<h2 class="text-sm mb-1">Overall</h2>
+			<Overall
+				totalPlays={overall.totalPlays}
+				totalSongs={overall.totalSongs}
+				totalTime={overall.totalTime}
 			/>
-		{/each}
-	</div>
-	<div class="">
-		<h2 class="text-sm mb-2">Top albums</h2>
-		<TopAlbums albums={topAlbums} />
-	</div>
-	<div class="">
-		<h2 class="text-sm mb-2">Top artists</h2>
-		<TopArtists artists={topArtists}/>
-	</div>
-	<div class="">
-		<h2 class="text-sm mb-2">Overall</h2>
-		<Overall totalPlays={overall.totalPlays} totalSongs={overall.totalSongs} totalTime={overall.totalTime}/>
+		</div>
 	</div>
 </div>
