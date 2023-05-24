@@ -7,7 +7,7 @@ export default {
       'display': ["Libre Baskerville", "Baskerville", "Times New Roman"],
       'body': ["Libre Franklin", "Helvetica", "Arial"],
       'mono': ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", '"Liberation Mono"', '"Courier New"', "monospace"],
-      'ipod': ["'Myriad'", "'Myraid Pro'", "'Noto Sans'"]
+      'ipod': ["'Myriad'", "'Myraid Pro'", "'Noto Sans'", "sans"]
     },
     extend: {
       boxShadow: {
