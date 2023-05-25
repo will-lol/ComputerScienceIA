@@ -28,7 +28,7 @@
 	<div class="grow flex flex-col items-end">
 		<div class="mb-1">
 			<span class="font-mono grow">{plays}</span><span class="text-xs text-gray-600"
-				>&#160;plays</span
+				>&#160;{plays == 1 ? "play" : "plays"}</span
 			>
 		</div>
 		{#if rating != undefined}
