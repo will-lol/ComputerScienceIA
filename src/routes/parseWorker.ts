@@ -40,9 +40,13 @@ export type dataPackage = {
 	songs: song[];
 };
 
-onmessage = async (e) => {
+addEventListener('error', (e) => {
+	throw e
+})
+
+onmessage = (e) => {
 	const message = e.data as string;
-	postMessage(await parse(message));
+	parse(message).then((res) => postMessage(res)).catch((err) => {postMessage({error: err})});
 };
 
 function xmlUnescape(string: string): string {

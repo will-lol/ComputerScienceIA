@@ -12,10 +12,10 @@
 	if (primary) {
 		classes.push('bg-blue-500 hover:bg-blue-600 text-white');
 	} else {
-		classes.push('bg-white hover:bg-gray-100');
+		classes.push('bg-gray-50 bg-opacity-75 hover:bg-gray-100');
 	}
 </script>
 
-<button {...$$props}
+<button on:click {...$$props}
 	class={classes.join(' ')}><slot /></button
 >

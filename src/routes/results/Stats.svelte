@@ -3,15 +3,18 @@
 	import type { dataPackage, song, album, artist, overallStats } from '../parseWorker';
 	import isServer from '../../lib/util/isServer';
 	import BinarySearchTree from '../../lib/util/binarySearchTree';
+	import InOrderTreeCursor from '../../lib/util/treeCursor';
 	import Song from './Song.svelte';
 	import TopAlbums from './TopAlbums.svelte';
 	import TopArtists from './TopArtists.svelte';
 	import Overall from './Overall.svelte';
 	import IPod from './iPod.svelte';
+	import Button from '../../lib/components/Button.svelte';
 
 	let data: dataPackage | undefined = undefined;
 	let songCount: number = 0;
-	let topTracks: song[] = [];
+	let topTracks: song[] = Array(10);
+	let trackCursor: InOrderTreeCursor<song>;
 	let topAlbums: album[] = [];
 	let topArtists: artist[] = [];
 	let overall: overallStats = { totalPlays: 0, totalTime: 0, totalSongs: 0 };
@@ -190,7 +193,12 @@
 
 		topAlbums = albumPlayTree.inOrderTraverse(10);
 		topArtists = artistPlayTree.inOrderTraverse(5);
-		topTracks = playTree.inOrderTraverse(10);
+		trackCursor = new InOrderTreeCursor(playTree);
+
+		playTree.inOrderTraverse(10);
+		for (let i = 0; i < topTracks.length; i++) {
+			topTracks[i] = trackCursor.next();
+		}
 	}
 </script>
 
@@ -198,7 +206,7 @@
 	<div class="flex">
 		<div class="w-full">
 			<h2 class="text-sm mb-1">iPod</h2>
-			{#if topTracks[0] != undefined} 
+			{#if topTracks[0] != undefined}
 				<IPod
 					totalSongs={songCount}
 					songArtist={stringDefault(topTracks[0].artist)}
@@ -211,16 +219,24 @@
 	<div>
 		<h2 class="text-sm mb-1">Top tracks</h2>
 		<div class="flex flex-col gap-2">
-			{#each topTracks as track, i}
-				<Song
-					rating={track.rating}
-					plays={playCountDefault(track.playCount)}
-					num={i + 1}
-					songArtist={stringDefault(track.artist)}
-					songTitle={stringDefault(track.name)}
-					songAlbum={stringDefault(track.album)}
-				/>
-			{/each}
+			{#if topTracks[0] != undefined}
+				{#each topTracks as track, i}
+					<Song
+						rating={track.rating}
+						plays={playCountDefault(track.playCount)}
+						num={i + 1}
+						songArtist={stringDefault(track.artist)}
+						songTitle={stringDefault(track.name)}
+						songAlbum={stringDefault(track.album)}
+					/>
+				{/each}
+			{/if}
+			<Button on:click={() => {
+				for (let i = 0; i < 10; i ++) {
+					topTracks.push(trackCursor.next())
+				}
+				topTracks = topTracks;
+			}} >Show more</Button>
 		</div>
 	</div>
 	<div class="flex flex-col gap-2">

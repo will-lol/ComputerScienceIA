@@ -17,6 +17,10 @@ export default class BinarySearchTree<T> {
 		return this.size;
 	}
 
+	getComparator() {
+		return this.comparator;
+	}
+
 	insert(data: T): void {
 		const newNode = new Node(data, this.size);
 		if (this.root == null) {
@@ -137,7 +141,7 @@ export default class BinarySearchTree<T> {
 	}
 }
 
-class Node<T> {
+export class Node<T> {
 	left: Node<T> | null;
 	right: Node<T> | null;
 	parent: Node<T> | null;

@@ -22,13 +22,19 @@
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
 		state = 'Parsing';
-		const data = await workerToPromise(parseWorker, await file.text()) as dataPackage;
-		dataStore.set(data);
-		globalThis.localStorage.setItem("data", JSON.stringify(data));
-		state = 'Parsed. Redirecting';
-		goto("/results", { replaceState: false });
+		let data: dataPackage;
+		try {
+			data = (await workerToPromise(parseWorker, await file.text())) as dataPackage;
+			dataStore.set(data);
+			globalThis.localStorage.setItem('data', JSON.stringify(data));
+			state = 'Parsed. Redirecting';
+			goto('/results', { replaceState: false });
+		} catch {
+			state = 'Parser error. Try reloading this page and exporting and adding the XML file again.';
+		}
 	}
 </script>
+
 <div class="sm:my-20">
 	<OrderedList>
 		<ListItem>Open the Apple Music app on your Mac</ListItem>
@@ -36,7 +42,7 @@
 		<ListItem>Go to 'Library'</ListItem>
 		<ListItem>Click 'Export Library...'</ListItem>
 		<ListItem>Save the file</ListItem>
-	</OrderedList>	
+	</OrderedList>
 </div>
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
 <Button disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
@@ -45,7 +51,7 @@
 		class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
 	>
 		{state}
-		{#if state != "I've saved the file!"}
+		{#if state == "Parsing"}
 			<Ellipses />
 		{/if}
 	</label></Button
