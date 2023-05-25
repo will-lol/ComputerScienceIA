@@ -40,7 +40,7 @@
         <div class="grid grid-rows-6 gap-1 m-2">
             <div class="w-full h-full">1 of {totalSongs}</div>
             <div class="row-span-3 flex items-center overflow-scroll">
-                <img class="w-18 mr-2" src={imageSource.href} alt={`Album cover for ${songAlbum}`}>
+                <img loading="lazy" class="w-18 mr-2" src={imageSource.href} alt={`Album cover for ${songAlbum}`}>
                 <div class="flex flex-col gap-1 flex-grow whitespace-nowrap">
                     <div >
                         {songTitle}

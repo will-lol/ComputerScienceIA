@@ -17,6 +17,7 @@
 >
 	<span class="pr-4 text-gray-500 font-mono">{padNum(num, 2)}</span>
 	<img
+		loading="lazy"
 		src={imageSource.href}
 		class="aspect-square w-14 border border-solid border-gray-300 shadow-xs flex text-center text-xs items-center justify-center"
 		alt="Album art"
