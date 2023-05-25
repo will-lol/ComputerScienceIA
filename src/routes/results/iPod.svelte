@@ -1,6 +1,17 @@
+<script lang="ts">
+	export let songAlbum: string;
+	export let songTitle: string;
+	export let songArtist: string;
+    export let totalSongs: number;
+
+    let imageSource = new URL(globalThis.location.origin + '/api/albumArt');
+	imageSource.searchParams.set('album', songAlbum);
+	imageSource.searchParams.set('artist', songArtist);
+</script>
+
 <div class="mx-auto aspect-ipod font-ipod grid p-4 bg-gradient-to-tr from-[#eceef0] to-[#fbfdfd] from-[47%] to-[53%] w-72 rounded-xl border-solid border-stone-300 border-2 shadow-lg">
-    <div class="rounded w-full h-44 bg-[#f0f6fb] border-[3px] border-black border-solid">
-        <div class="w-full px-1 h-5 text-sm text-center flex justify-between items-center border-b border-solid border-gray-400 bg-gradient-to-b from-[#f0f0f0] to-[#bfccd6]">
+    <div class="rounded text-xs w-full h-48 bg-[#f0f6fb] border-[3px] border-black border-solid">
+        <div class="relative w-full px-1 h-5 text-sm text-center flex justify-between items-center border-b border-solid border-gray-400 bg-gradient-to-b from-[#f0f0f0] to-[#bfccd6]">
             <div>
                 <svg width=15 viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M27.5 14.634a1 1 0 0 1 0 1.732L7.25 28.057a1 1 0 0 1-1.5-.866V3.81a1 1 0 0 1 1.5-.866L27.5 14.634Z" fill="url(#a)"/>
@@ -13,7 +24,7 @@
                     </defs>
                   </svg>                  
             </div>
-            Top song
+            <div class="absolute left-1/2 -translate-x-1/2">Top song</div> 
             <div>
                 <svg width=25 viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M26 10H3v11h23v-3h2v-5h-2v-3Z" fill="url(#b)" stroke="black" stroke-opacity=".53" stroke-width="2"/>
@@ -24,6 +35,33 @@
                       </linearGradient>
                     </defs>
                 </svg>                  
+            </div>
+        </div>
+        <div class="grid grid-rows-6 gap-1 m-2">
+            <div class="w-full h-full">1 of {totalSongs}</div>
+            <div class="row-span-3 flex items-center overflow-scroll">
+                <img class="w-18 mr-2" src={imageSource.href} alt={`Album cover for ${songAlbum}`}>
+                <div class="flex flex-col gap-1 flex-grow whitespace-nowrap">
+                    <div >
+                        {songTitle}
+                    </div>
+                    <div>
+                        {songArtist}
+                    </div>
+                    <div>
+                         {songAlbum}
+                    </div>    
+                </div>
+            </div>
+            
+            <div class="h-full flex items-end">
+                <div class="h-4 w-full bg-progress-empty shadow">
+                    <div class="h-full w-1/2 bg-progress shadow"></div>        
+                </div>
+            </div>
+            <div class="w-full h-full flex content-between items-center justify-between">
+                <div>3:41</div>
+                <div>-1:20</div>
             </div>
         </div>
     </div>

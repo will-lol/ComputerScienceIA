@@ -10,6 +10,7 @@
 	import IPod from './iPod.svelte';
 
 	let data: dataPackage | undefined = undefined;
+	let songCount: number = 0;
 	let topTracks: song[] = [];
 	let topAlbums: album[] = [];
 	let topArtists: artist[] = [];
@@ -124,7 +125,8 @@
 			}
 		}
 
-		const songArray = data.songs;
+		let songArray = data.songs;
+		songCount = songArray.length;
 		let numberOfSongsWithRatings = 0;
 		for (const song of songArray) {
 			if (song.rating != undefined) {
@@ -196,7 +198,14 @@
 	<div class="flex">
 		<div class="w-full">
 			<h2 class="text-sm mb-1">iPod</h2>
-			<IPod />
+			{#if topTracks[0] != undefined} 
+				<IPod
+					totalSongs={songCount}
+					songArtist={stringDefault(topTracks[0].artist)}
+					songTitle={stringDefault(topTracks[0].name)}
+					songAlbum={stringDefault(topTracks[0].album)}
+				/>
+			{/if}
 		</div>
 	</div>
 	<div>
@@ -212,7 +221,7 @@
 					songAlbum={stringDefault(track.album)}
 				/>
 			{/each}
-		</div>	
+		</div>
 	</div>
 	<div class="flex flex-col gap-2">
 		<div>

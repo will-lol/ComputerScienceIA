@@ -7,9 +7,16 @@ export default {
       'display': ["Libre Baskerville", "Baskerville", "Times New Roman"],
       'body': ["Libre Franklin", "Helvetica", "Arial"],
       'mono': ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", '"Liberation Mono"', '"Courier New"', "monospace"],
-      'ipod': ["'Myriad'", "'Myraid Pro'", "'Noto Sans'", "sans"]
+      'ipod': ["'Myriad'", "'Myraid Pro'", "'Noto Sans'", 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', '"Noto Sans"', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"']
     },
     extend: {
+      spacing: {
+        '18': '4.5rem'
+      },
+      backgroundImage: {
+        'progress': "url(./lib/images/progressBarFill.svg)",
+        'progress-empty': "url(./lib/images/progressBarEmpty.svg)"
+      },
       boxShadow: {
         'xs': '0 0.15rem 0 0px rgba(0,0,0,0.2)'
       },
