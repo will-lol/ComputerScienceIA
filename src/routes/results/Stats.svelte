@@ -35,6 +35,14 @@
 		}
 	}
 
+	function durationDefault(thing: number | undefined): number {
+		if (thing == undefined) {
+			return 0;
+		} else {
+			return thing;
+		}
+	}
+
 	function ratingDefault(thing: number | undefined): number {
 		if (thing == undefined) {
 			return 2.5;
@@ -208,6 +216,7 @@
 			<h2 class="text-sm mb-1">iPod</h2>
 			{#if topTracks[0] != undefined}
 				<IPod
+					duration={durationDefault(topTracks[0].time)}
 					totalSongs={songCount}
 					songArtist={stringDefault(topTracks[0].artist)}
 					songTitle={stringDefault(topTracks[0].name)}

@@ -3,6 +3,11 @@
 	export let songTitle: string;
 	export let songArtist: string;
     export let totalSongs: number;
+    export let duration: number;
+
+    let seconds = duration / 1000;
+    let minutesSeconds = Math.trunc(seconds % 60);
+    let minutesMinutes = Math.trunc(seconds / 60);
 
     let imageSource = new URL(globalThis.location.origin + '/api/albumArt');
 	imageSource.searchParams.set('album', songAlbum);
@@ -56,12 +61,12 @@
             
             <div class="h-full flex items-end">
                 <div class="h-4 w-full bg-progress-empty shadow">
-                    <div class="h-full w-1/2 bg-progress shadow"></div>        
+                    <div class="h-full bg-progress shadow w-2/3"></div>        
                 </div>
             </div>
             <div class="w-full h-full flex content-between items-center justify-between">
-                <div>3:41</div>
-                <div>-1:20</div>
+                <div>{Math.trunc(minutesMinutes * 2/3)}:{Math.trunc(minutesSeconds * 2/3)}</div>
+                <div>-{Math.trunc(minutesMinutes * 1/3)}:{Math.trunc(minutesSeconds * 1/3)}</div>
             </div>
         </div>
     </div>
