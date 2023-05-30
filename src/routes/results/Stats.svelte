@@ -240,7 +240,7 @@
 					/>
 				{/each}
 			{/if}
-			<Button on:click={() => {
+			<Button transparent on:click={() => {
 				for (let i = 0; i < 10; i ++) {
 					topTracks.push(trackCursor.next())
 				}

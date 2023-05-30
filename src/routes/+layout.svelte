@@ -5,6 +5,9 @@
 	import noiseWorkerCreator from './noiseWorker?worker';
 	import workerToPromise from '../lib/util/workerToPromise';
 	import isServer from '../lib/util/isServer';
+	import Nav from '../lib/components/Nav.svelte';
+	import type { LayoutData } from './$types';
+	export let data: LayoutData;
 
 	let simplexWorker: Worker;
 	let noiseWorker: Worker;
@@ -20,10 +23,8 @@
 
 	onMount(async () => {
 		//generate noise overlay
-		if (!isServer()) {
-			renderNoise(noiseOverlay);
-			fadeIn(noiseOverlay);
-		}
+		renderNoise(noiseOverlay);
+		fadeIn(noiseOverlay);
 
 		//generate simplex noise and animate
 		const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -34,10 +35,8 @@
 			}
 		});
 
-		if (!isServer()) {
-			await renderSimplexNoise(canvas, animationController);
-			fadeIn(canvas);
-		}
+		await renderSimplexNoise(canvas, animationController);
+		fadeIn(canvas);
 	});
 
 	function fadeIn(elem: HTMLElement) {
@@ -122,5 +121,6 @@
 />
 
 <div class="font-body">
+	<Nav url={data.url == undefined ? "" : data.url} clientID={data.clientID == undefined ? "" : data.clientID}/>
 	<slot />
 </div>
