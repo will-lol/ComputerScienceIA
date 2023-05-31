@@ -15,5 +15,5 @@
 </script>
 
 <Page>
-	<Title>Authorising<Ellipses/></Title>
+	<Title>Authorising<span><Ellipses/></span></Title>
 </Page>
