@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { dataStore } from '../stores';
+	import { dataStore } from '$lib/util/stores';
 	import type { dataPackage, song, album, artist, overallStats } from '../parseWorker';
-	import isServer from '../../lib/util/isServer';
-	import BinarySearchTree from '../../lib/util/binarySearchTree';
-	import InOrderTreeCursor from '../../lib/util/treeCursor';
+	import isServer from '$lib/util/isServer';
+	import BinarySearchTree from '$lib/util/binarySearchTree';
+	import InOrderTreeCursor from '$lib/util/treeCursor';
 	import Song from './Song.svelte';
 	import TopAlbums from './TopAlbums.svelte';
 	import TopArtists from './TopArtists.svelte';
 	import Overall from './Overall.svelte';
 	import IPod from './iPod.svelte';
-	import Button from '../../lib/components/Button.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	let data: dataPackage | undefined = undefined;
 	let songCount: number = 0;

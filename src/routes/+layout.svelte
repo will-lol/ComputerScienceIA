@@ -3,9 +3,9 @@
 	import { onMount } from 'svelte';
 	import simplexWorkerCreator from './simplexWorker?worker';
 	import noiseWorkerCreator from './noiseWorker?worker';
-	import workerToPromise from '../lib/util/workerToPromise';
-	import isServer from '../lib/util/isServer';
-	import Nav from '../lib/components/Nav.svelte';
+	import workerToPromise from '$lib/util/workerToPromise';
+	import isServer from '$lib/util/isServer';
+	import Nav from '$lib/components/Nav.svelte';
 	import type { LayoutData } from './$types';
 	export let data: LayoutData;
 

@@ -7,7 +7,7 @@
 	font-family: 'Libre Baskerville';
 	font-style: normal;
 	font-weight: 400;
-	src: url('./lib/fonts/libre-baskerville-v14-latin-regular.woff2') format('woff2');
+	src: url('$lib/fonts/libre-baskerville-v14-latin-regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -15,7 +15,7 @@
 	font-family: 'Libre Franklin';
 	font-style: normal;
 	font-weight: 400;
-	src: url('./lib/fonts/libre-franklin-v13-latin-regular.woff2') format('woff2');
+	src: url('$lib/fonts/libre-franklin-v13-latin-regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -23,7 +23,7 @@
 	font-family: 'Libre Franklin';
 	font-style: normal;
 	font-weight: 500;
-	src: url('./lib/fonts/libre-franklin-v13-latin-500.woff2') format('woff2');
+	src: url('$lib/fonts/libre-franklin-v13-latin-500.woff2') format('woff2');
 }
 
 @font-face {
@@ -31,7 +31,7 @@
 	font-family: 'IBM Plex Mono';
 	font-style: normal;
 	font-weight: 400;
-	src: url('./lib/fonts/IBMPlexMono-Regular-subset.woff2') format('woff2');
+	src: url('$lib/fonts/IBMPlexMono-Regular-subset.woff2') format('woff2');
 	unicode-range: U+30-39;
 }
 
@@ -40,7 +40,7 @@
 	font-family: 'Libre Baskerville';
 	font-style: italic;
 	font-weight: 400;
-	src: url('./lib/fonts/libre-baskerville-v14-latin-italic.woff2') format('woff2');
+	src: url('$lib/fonts/libre-baskerville-v14-latin-italic.woff2') format('woff2');
 }
 
 @font-face {
@@ -48,5 +48,5 @@
 	font-family: 'Noto Sans';
 	font-style: italic;
 	font-weight: 500;
-	src: url('./lib/fonts/noto-sans-v28-latin-500.woff2') format('woff2');
+	src: url('$lib/fonts/noto-sans-v28-latin-500.woff2') format('woff2');
 }

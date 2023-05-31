@@ -1,11 +1,11 @@
 <script lang="ts">
-	import ListItem from '../lib/components/ListItem.svelte';
-	import OrderedList from '../lib/components/OrderedList.svelte';
-	import Button from '../lib/components/Button.svelte';
-	import Ellipses from '../lib/components/Ellipses.svelte';
+	import ListItem from '$lib/components/ListItem.svelte';
+	import OrderedList from '$lib/components/OrderedList.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Ellipses from '$lib/components/Ellipses.svelte';
 	import parseWorkerCreator from './parseWorker?worker';
-	import workerToPromise from '../lib/util/workerToPromise';
-	import { dataStore } from './stores';
+	import workerToPromise from '$lib/util/workerToPromise';
+	import { dataStore } from '$lib/util/stores';
 	import { goto } from '$app/navigation';
 	import type { dataPackage } from './parseWorker';
 

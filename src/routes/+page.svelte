@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Page from '../lib/components/Page.svelte';
-	import Content from '../lib/components/Content.svelte';
-	import Title from '../lib/components/Title.svelte';
+	import Page from '$lib/components/Page.svelte';
+	import Content from '$lib/components/Content.svelte';
+	import Title from '$lib/components/Title.svelte';
 	import Onboard from './Onboard.svelte';
 </script>
 

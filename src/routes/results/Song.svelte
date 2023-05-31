@@ -5,7 +5,7 @@
 	export let num: number;
 	export let plays: number;
 	export let rating: number | undefined;
-	import padNum from '../../lib/util/padNum';
+	import padNum from '$lib/util/padNum';
 
 	let imageSource = new URL(globalThis.location.origin + '/api/albumArt');
 	imageSource.searchParams.set('album', songAlbum);

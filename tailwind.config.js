@@ -14,8 +14,8 @@ export default {
         '18': '4.5rem'
       },
       backgroundImage: {
-        'progress': "url(./lib/images/progressBarFill.svg)",
-        'progress-empty': "url(./lib/images/progressBarEmpty.svg)"
+        'progress': "url($lib/images/progressBarFill.svg)",
+        'progress-empty': "url($lib/images/progressBarEmpty.svg)"
       },
       boxShadow: {
         'xs': '0 0.15rem 0 0px rgba(0,0,0,0.2)'
