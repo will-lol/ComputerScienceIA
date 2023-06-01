@@ -210,6 +210,8 @@
 	}
 </script>
 
+<Button>Save to account</Button>
+<Button>Compare to</Button>
 <div class="grid lg:grid-cols-[auto_auto_auto] w-full gap-4">
 	<div class="flex">
 		<div class="w-full">

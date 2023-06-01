@@ -1,22 +1,19 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import env from '$lib/util/env';
 import { githubAuthTypeChecker, githubAuthErrorTypeChecker } from '$lib/util/zod';
 import type { githubAuthError } from '$lib/util/zod';
 import type { auth } from '$lib/util/auth';
+import { CLIENT_ID, CLIENT_SECRET } from "$env/static/private";
 
 export const load = (async ({ url }): Promise<auth> => {
 	const code = url.searchParams.get('code');
 	if (!code) {
 		throw error(400, 'Request must include code param');
 	}
-	if (!env) {
-		throw error(500, 'Invalid environment variables');
-	}
 	const oauthURL = new URL('https://github.com/login/oauth/access_token');
 
-	oauthURL.searchParams.set('client_id', env.CLIENT_ID);
-	oauthURL.searchParams.set('client_secret', env.CLIENT_SECRET);
+	oauthURL.searchParams.set('client_id', CLIENT_ID);
+	oauthURL.searchParams.set('client_secret', CLIENT_SECRET);
 	oauthURL.searchParams.set('code', code);
 
 	const result = await fetch(oauthURL.href, {

@@ -1,11 +1,11 @@
 import type { LayoutServerLoad } from './$types';
-import env from "$lib/util/env"
+import { CLIENT_ID } from '$env/static/private'
 
 export const load = (( { url } ) => {
-    if (env) {
+    if (CLIENT_ID) {
         return {
             url: url.origin + "/auth",
-            clientID: env.CLIENT_ID
+            clientID: CLIENT_ID
         };
     }
 }) satisfies LayoutServerLoad;

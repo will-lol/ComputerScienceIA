@@ -8,7 +8,7 @@ function createAuthStore() {
     if (isServer()) {
         defaultValue = null;
     } else {
-        const sessionStorageAuthString = globalThis.sessionStorage.getItem("auth");
+        const sessionStorageAuthString = globalThis.localStorage.getItem("auth");
         if (sessionStorageAuthString == null) {
             defaultValue = null;
         } else {
@@ -23,9 +23,9 @@ function createAuthStore() {
         setWithLocalStorage: (value: auth | null) => {
             set(value);
             if (value == null) {
-                globalThis.sessionStorage.removeItem("auth");
+                globalThis.localStorage.removeItem("auth");
             } else {
-                globalThis.sessionStorage.setItem("auth", JSON.stringify(value))
+                globalThis.localStorage.setItem("auth", JSON.stringify(value))
             }
         }
 	};

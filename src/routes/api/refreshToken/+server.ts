@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import env from "$lib/util/env";
 import { githubAuthTypeChecker, githubAuthErrorTypeChecker } from "$lib/util/zod";
 import type { githubAuth, githubAuthError } from "$lib/util/zod";
+import { CLIENT_ID, CLIENT_SECRET } from '$env/static/private';
 import type { auth } from '$lib/util/auth';
 
 export type apiOutput = auth;
@@ -15,8 +15,8 @@ export const GET = (async ({ url })  => {
     }
 
     const refreshUrl = new URL("https://github.com/login/oauth/access_token");
-    refreshUrl.searchParams.set("client_id", env.CLIENT_ID);
-    refreshUrl.searchParams.set("client_secret", env.CLIENT_SECRET);
+    refreshUrl.searchParams.set("client_id", CLIENT_ID);
+    refreshUrl.searchParams.set("client_secret", CLIENT_SECRET);
     refreshUrl.searchParams.set("grant_type", "refresh_token");
     refreshUrl.searchParams.set("refresh_token", refreshToken);
     const refresh = await fetch(refreshUrl.href, {

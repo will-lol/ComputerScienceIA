@@ -20,7 +20,7 @@ export type auth = {
 export async function getAuth() {
 	if (auth == undefined) {
 		//set auth store from session storage
-		const sessionStorageAuthString = globalThis.sessionStorage.getItem('auth');
+		const sessionStorageAuthString = globalThis.localStorage.getItem('auth');
 		if (sessionStorageAuthString) {
 			const sessionStorageAuth = JSON.parse(sessionStorageAuthString) as auth;
 			authStore.setWithLocalStorage(sessionStorageAuth);
