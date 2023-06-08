@@ -22,6 +22,6 @@
 	});
 </script>
 
-<div class="w-4 text-left">
+<div class="w-4 inline-block text-left">
 	{ellipses}
 </div>

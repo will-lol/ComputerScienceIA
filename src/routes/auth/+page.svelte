@@ -3,14 +3,14 @@
 	import Page from '$lib/components/Page.svelte';
 	import Title from '$lib/components/Title.svelte';
     import type { PageData } from './$types';
-    import { authStore } from '$lib/util/stores';
     import { goto } from '$app/navigation';
     import Ellipses from '$lib/components/Ellipses.svelte';
+    import { authStore } from '$lib/util/stores';
     export let data: PageData;
     
     onMount(() => {
         authStore.setWithLocalStorage(data);
-        goto('/results', { replaceState: false })
+        goto('/', { replaceState: false })
     })
 </script>
 

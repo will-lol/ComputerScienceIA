@@ -6,6 +6,7 @@
 	import workerToPromise from '$lib/util/workerToPromise';
 	import isServer from '$lib/util/isServer';
 	import Nav from '$lib/components/Nav.svelte';
+	import { pageDataStore } from '$lib/util/stores';
 	import type { LayoutData } from './$types';
 	export let data: LayoutData;
 
@@ -22,6 +23,8 @@
 	let animationController = new AbortController();
 
 	onMount(async () => {
+		pageDataStore.set(data);
+
 		//generate noise overlay
 		renderNoise(noiseOverlay);
 		fadeIn(noiseOverlay);
@@ -121,6 +124,6 @@
 />
 
 <div class="font-body">
-	<Nav url={data.url == undefined ? "" : data.url} clientID={data.clientID == undefined ? "" : data.clientID}/>
+	<Nav/>
 	<slot />
 </div>

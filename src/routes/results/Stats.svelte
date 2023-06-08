@@ -10,6 +10,7 @@
 	import Overall from './Overall.svelte';
 	import IPod from './iPod.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import { fetchWithAuth } from '$lib/util/auth';
 
 	let data: dataPackage | undefined = undefined;
 	let songCount: number = 0;
@@ -210,8 +211,6 @@
 	}
 </script>
 
-<Button>Save to account</Button>
-<Button>Compare to</Button>
 <div class="grid lg:grid-cols-[auto_auto_auto] w-full gap-4">
 	<div class="flex">
 		<div class="w-full">

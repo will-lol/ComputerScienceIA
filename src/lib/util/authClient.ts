@@ -18,15 +18,19 @@ export type auth = {
 };
 
 export async function getAuth() {
-	if (auth == undefined) {
+	if (!auth) {
 		//set auth store from session storage
 		const sessionStorageAuthString = globalThis.localStorage.getItem('auth');
 		if (sessionStorageAuthString) {
 			const sessionStorageAuth = JSON.parse(sessionStorageAuthString) as auth;
 			authStore.setWithLocalStorage(sessionStorageAuth);
+		} else {
+			throw 'no auth available';
 		}
-	} else if (auth.token.expires.valueOf() < Date.now()) {
+	}
+	if (auth.token.expires.valueOf() < Date.now()) {
 		if (auth.refreshToken.expires.valueOf() > Date.now()) {
+			console.log("hi");
 			const refreshURL = new URL(globalThis.location.origin + '/api/refreshToken');
 			refreshURL.searchParams.set('refresh', auth.refreshToken.data);
 			const refreshRes = (await fetch(refreshURL)
@@ -43,13 +47,12 @@ export async function getAuth() {
 }
 
 export async function fetchWithAuth(input: RequestInfo, init?: RequestInit): Promise<Response> {
-	const auth = await getAuth();
+	const auth = await getAuth().catch(() => {authStore.setWithLocalStorage(null)});
 	if (auth != undefined) {
 		const modifiedInit = {
 			...init,
 			headers: { ...init?.headers, Authorization: `Bearer ${auth.token.data}` }
 		};
-		console.log(modifiedInit);
 		let res = await fetch(input, modifiedInit);
 		return res;
 	} else {

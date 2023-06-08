@@ -1,9 +1,9 @@
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { githubAuthTypeChecker, githubAuthErrorTypeChecker } from "$lib/util/zod";
-import type { githubAuth, githubAuthError } from "$lib/util/zod";
+import type { githubAuthError } from "$lib/util/zod";
 import { CLIENT_ID, CLIENT_SECRET } from '$env/static/private';
-import type { auth } from '$lib/util/auth';
+import type { auth } from '$lib/util/authClient';
 
 export type apiOutput = auth;
 

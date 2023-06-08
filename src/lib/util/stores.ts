@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import type { dataPackage } from "../../routes/parseWorker";
 import isServer from '$lib/util/isServer';
-import type { auth } from "$lib/util/auth";
+import type { auth } from "$lib/util/authClient";
 
 function createAuthStore() {
     let defaultValue: auth | null;
@@ -13,6 +13,10 @@ function createAuthStore() {
             defaultValue = null;
         } else {
             defaultValue = JSON.parse(sessionStorageAuthString);
+            if (defaultValue) {
+                defaultValue.token.expires = new Date(defaultValue.token.expires);
+                defaultValue.refreshToken.expires = new Date(defaultValue.refreshToken.expires);
+            }
         }    
     }
 
@@ -31,5 +35,6 @@ function createAuthStore() {
 	};
 }
 
+export const pageDataStore = writable<{ clientID?: string, url?: string }>(undefined);
 export const dataStore = writable<dataPackage>(undefined);
 export const authStore = createAuthStore();

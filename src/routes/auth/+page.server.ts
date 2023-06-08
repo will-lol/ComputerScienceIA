@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { githubAuthTypeChecker, githubAuthErrorTypeChecker } from '$lib/util/zod';
 import type { githubAuthError } from '$lib/util/zod';
-import type { auth } from '$lib/util/auth';
+import type { auth } from '$lib/util/authClient';
 import { CLIENT_ID, CLIENT_SECRET } from "$env/static/private";
 
 export const load = (async ({ url }): Promise<auth> => {
@@ -39,6 +39,5 @@ export const load = (async ({ url }): Promise<auth> => {
 			expires: new Date(Date.now() + auth.data.refresh_token_expires_in)
 		}
 	}
-    console.log(output);
 	return output;
 }) satisfies PageServerLoad;
