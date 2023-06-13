@@ -27,7 +27,7 @@ function createAuthStore() {
         setWithLocalStorage: (value: auth | null) => {
             set(value);
             if (value == null) {
-                globalThis.localStorage.removeItem("auth");
+                globalThis.localStorage.clear();
             } else {
                 globalThis.localStorage.setItem("auth", JSON.stringify(value))
             }

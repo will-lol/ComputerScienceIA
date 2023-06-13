@@ -80,16 +80,8 @@
 	function checkInput(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
 		if (entryCheckboxes.length > 2) {
 			const currentVal = parseInt(event.currentTarget.value);
-			if (currentVal != entryCheckboxes[0] && currentVal != entryCheckboxes[2]) {
-				const lastVal = parseInt(last!.value);
-				if (lastVal > currentVal) {
-					entryCheckboxes = [entryCheckboxes[0], currentVal];
-				} else {
-					entryCheckboxes = [currentVal, entryCheckboxes[2]];
-				}
-			} else {
-				entryCheckboxes = [entryCheckboxes[0], entryCheckboxes[2]];
-			}
+			const lastVal = parseInt(last!.value);
+			entryCheckboxes = [currentVal, 3 - (lastVal + currentVal)]
 		}
 		last = event.currentTarget;
 	}

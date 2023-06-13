@@ -36,6 +36,7 @@
 			setTimeout(() => {
 				goto('/', { replaceState: false });
 			}, 1000)
+			return;
 		} else if (comparisonData != null) {
 			const compareTree = new BinarySearchTree((one: song, two: song) => {
 				return stringDefault(two.name).localeCompare(stringDefault(one.name));
@@ -53,8 +54,8 @@
 					song.playCount = playCountDefault(song.playCount) - playCountDefault(res.playCount);
 				}
 			}
-			songArray = data.songs;
 		} 
+		songArray = data.songs;
 	});
 </script>
 
