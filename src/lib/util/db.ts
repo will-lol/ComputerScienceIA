@@ -1,4 +1,4 @@
-import { createClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 import { DB_TOKEN } from "$env/static/private";
 import { createObject, getObject, deleteObject } from "$lib/util/s3";
 import { md5 } from "hash-wasm";
