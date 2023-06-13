@@ -6,10 +6,12 @@
 	import parseWorkerCreator from './parseWorker?worker';
 	import workerToPromise from '$lib/util/workerToPromise';
 	import { dataStore } from '$lib/util/stores';
+	import type { dataPackage } from '$lib/util/zod';
 	import { goto } from '$app/navigation';
-	import type { dataPackage } from './parseWorker';
+	import { onMount } from 'svelte';
 
 	let state = "I've saved the file!";
+	let alreadyLoaded: boolean;
 
 	let files: FileList | undefined;
 	$: if (files != undefined) {
@@ -19,14 +21,18 @@
 		}
 	}
 
+	onMount(() => {
+		alreadyLoaded = localStorage.getItem("data") != null;
+	})
+
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
 		state = 'Parsing';
 		let data: dataPackage;
 		try {
 			data = (await workerToPromise(parseWorker, await file.text())) as dataPackage;
-			dataStore.set(data);
-			globalThis.localStorage.setItem('data', JSON.stringify(data));
+			data.fromServer = false;
+			dataStore.setWithLocalStorage(data);
 			state = 'Parsed. Redirecting';
 			goto('/results', { replaceState: false });
 		} catch {
@@ -46,13 +52,13 @@
 </div>
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
 <Button disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
-	><label
-		for="file"
-		class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
-	>
-		{state}
-		{#if state == "Parsing"}
-			<Ellipses />
-		{/if}
-	</label></Button
+		><label
+			for="file"
+			class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
+		>
+			{state}
+			{#if state == "Parsing"}
+				<Ellipses />
+			{/if}
+		</label></Button
 >

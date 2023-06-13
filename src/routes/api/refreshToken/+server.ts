@@ -2,10 +2,8 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { githubAuthTypeChecker, githubAuthErrorTypeChecker } from "$lib/util/zod";
 import type { githubAuthError } from "$lib/util/zod";
-import { CLIENT_ID, CLIENT_SECRET } from '$env/static/private';
-import type { auth } from '$lib/util/authClient';
-
-export type apiOutput = auth;
+import { CLIENT_SECRET } from '$env/static/private';
+import { PUBLIC_CLIENT_ID } from '$env/static/public';
 
 export const GET = (async ({ url })  => {
     const refreshToken = url.searchParams.get("refresh");
@@ -15,7 +13,7 @@ export const GET = (async ({ url })  => {
     }
 
     const refreshUrl = new URL("https://github.com/login/oauth/access_token");
-    refreshUrl.searchParams.set("client_id", CLIENT_ID);
+    refreshUrl.searchParams.set("client_id", PUBLIC_CLIENT_ID);
     refreshUrl.searchParams.set("client_secret", CLIENT_SECRET);
     refreshUrl.searchParams.set("grant_type", "refresh_token");
     refreshUrl.searchParams.set("refresh_token", refreshToken);

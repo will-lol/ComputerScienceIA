@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { dataStore } from '$lib/util/stores';
-	import type { dataPackage, song, album, artist, overallStats } from '../parseWorker';
+	import type { dataPackage, song, album, artist, overallStats } from '$lib/util/zod';
+	import { stringDefault, playCountDefault, durationDefault, ratingDefault } from '$lib/util/defaultType'
 	import isServer from '$lib/util/isServer';
 	import BinarySearchTree from '$lib/util/binarySearchTree';
 	import InOrderTreeCursor from '$lib/util/treeCursor';
@@ -10,9 +10,8 @@
 	import Overall from './Overall.svelte';
 	import IPod from './iPod.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { fetchWithAuth } from '$lib/util/auth';
 
-	let data: dataPackage | undefined = undefined;
+	export let songs: song[];
 	let songCount: number = 0;
 	let topTracks: song[] = Array(10);
 	let trackCursor: InOrderTreeCursor<song>;
@@ -20,132 +19,36 @@
 	let topArtists: artist[] = [];
 	let overall: overallStats = { totalPlays: 0, totalTime: 0, totalSongs: 0 };
 
-	function stringDefault(thing: string | undefined): string {
-		if (thing == undefined) {
-			return '';
-		} else {
-			return thing;
-		}
-	}
-
-	function playCountDefault(thing: number | undefined): number {
-		if (thing == undefined) {
-			return 0;
-		} else {
-			return thing;
-		}
-	}
-
-	function durationDefault(thing: number | undefined): number {
-		if (thing == undefined) {
-			return 0;
-		} else {
-			return thing;
-		}
-	}
-
-	function ratingDefault(thing: number | undefined): number {
-		if (thing == undefined) {
-			return 2.5;
-		} else {
-			return thing / 20;
-		}
-	}
-
 	function songComparatorRating(songOne: song, songTwo: song) {
-		let one = songOne.playCount;
-		let two = songTwo.playCount;
-		let oneRating = songOne.rating;
-		let twoRating = songTwo.rating;
-		if (one == undefined) {
-			one = 0;
-		}
-		if (two == undefined) {
-			two = 0;
-		}
-
-		return two * ratingDefault(twoRating) - one * ratingDefault(oneRating);
+		return playCountDefault(songTwo.playCount) * ratingDefault(songTwo.rating) - playCountDefault(songOne.playCount) * ratingDefault(songOne.rating);
 	}
 	function songComparatorPlay(songOne: song, songTwo: song) {
-		let one = songOne.playCount;
-		let two = songTwo.playCount;
-		if (one == undefined) {
-			one = 0;
-		}
-		if (two == undefined) {
-			two = 0;
-		}
-
-		return two - one;
+		return playCountDefault(songTwo.playCount) - playCountDefault(songOne.playCount);
 	}
 	let playTree: BinarySearchTree<song>;
 
 	function albumComparatorPlay(albumOne: album, albumTwo: album) {
-		let one = albumOne.plays;
-		let two = albumTwo.plays;
-		if (one == undefined) {
-			one = 0;
-		}
-		if (two == undefined) {
-			two = 0;
-		}
-		return two - one;
+		return playCountDefault(albumTwo.plays) - playCountDefault(albumOne.plays);
 	}
 	function albumComparatorName(albumOne: album, albumTwo: album) {
-		let one = albumOne.name;
-		let two = albumTwo.name;
-		if (one == undefined) {
-			one = '';
-		}
-		if (two == undefined) {
-			two = '';
-		}
-		return two.localeCompare(one);
+		return stringDefault(albumTwo.name).localeCompare(stringDefault(albumOne.name));
 	}
 	function artistComparatorName(artistOne: artist, artistTwo: artist) {
-		let one = artistOne.name;
-		let two = artistTwo.name;
-		if (one == undefined) {
-			one = '';
-		}
-		if (two == undefined) {
-			two = '';
-		}
-		return two.localeCompare(one);
+		return stringDefault(artistOne.name).localeCompare(stringDefault(artistTwo.name));
 	}
 	function artistComparatorPlay(artistOne: artist, artistTwo: artist) {
-		let one = artistOne.plays;
-		let two = artistTwo.plays;
-		if (one == undefined) {
-			one = 0;
-		}
-		if (two == undefined) {
-			two = 0;
-		}
-		return two - one;
+		return playCountDefault(artistTwo.plays) - playCountDefault(artistOne.plays);
 	}
 
 	if (!isServer()) {
-		dataStore.subscribe((value) => (data = value));
-		if (!data) {
-			console.log('couldnt find data in svelte store. falling back to localstorage...');
-			const stringedData = globalThis.localStorage.getItem('data');
-			if (stringedData) {
-				data = JSON.parse(stringedData) as dataPackage;
-			} else {
-				throw 'no data found in local storage';
-			}
-		}
-
-		let songArray = data.songs;
-		songCount = songArray.length;
+		songCount = songs.length;
 		let numberOfSongsWithRatings = 0;
-		for (const song of songArray) {
+		for (const song of songs) {
 			if (song.rating != undefined) {
 				numberOfSongsWithRatings++;
 			}
 		}
-		const ratingRatio = numberOfSongsWithRatings / songArray.length;
+		const ratingRatio = numberOfSongsWithRatings / songs.length;
 		if (ratingRatio > 0.3) {
 			playTree = new BinarySearchTree(songComparatorRating);
 		} else {
@@ -155,7 +58,7 @@
 		const albumNameTree = new BinarySearchTree(albumComparatorName);
 		const artistNameTree = new BinarySearchTree(artistComparatorName);
 
-		for (const song of songArray) {
+		for (const song of songs) {
 			playTree.insert(song);
 			if (song.playCount) {
 				overall.totalPlays += song.playCount;

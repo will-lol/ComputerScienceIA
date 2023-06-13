@@ -9,6 +9,8 @@
 	}
 	if (absoluteBottom) {
 		classes.push('absolute bottom-0');
+	} else {
+		classes.push('relative')
 	}
 	if (primary) {
 		classes.push('bg-blue-500 hover:bg-blue-600 text-white shadow');

@@ -1,5 +1,5 @@
 import { authStore } from '$lib/util/stores';
-import type { apiOutput } from '../../routes/api/refreshToken/+server';
+import { refreshApiTypeChecker } from '$lib/util/zod';
 
 let auth: auth | null;
 authStore.subscribe((val) => {
@@ -17,37 +17,47 @@ export type auth = {
 	};
 };
 
+let refreshing: Promise<auth> | undefined;
+refreshing = undefined;
+async function refresh() {
+	if (auth == null) {
+		throw 'no auth to refresh';
+	}
+	if (auth.refreshToken.expires.valueOf() > Date.now()) {
+		const refreshURL = new URL(globalThis.location.origin + '/api/refreshToken');
+		refreshURL.searchParams.set('refresh', auth.refreshToken.data);
+		const refreshRes = await fetch(refreshURL)
+			.then((res) => res.json())
+			.catch((err) => {
+				throw "couldn't refresh token: " + err;
+			});
+		const refreshParsed = refreshApiTypeChecker.parse(refreshRes);
+		authStore.setWithLocalStorage(refreshParsed);
+		return refreshParsed;
+	} else {
+		throw 'refresh token expired';
+	}
+}
+
 export async function getAuth() {
-	if (!auth) {
-		//set auth store from session storage
-		const sessionStorageAuthString = globalThis.localStorage.getItem('auth');
-		if (sessionStorageAuthString) {
-			const sessionStorageAuth = JSON.parse(sessionStorageAuthString) as auth;
-			authStore.setWithLocalStorage(sessionStorageAuth);
-		} else {
-			throw 'no auth available';
-		}
+	if (auth == null) {
+		throw 'no auth available';
 	}
 	if (auth.token.expires.valueOf() < Date.now()) {
-		if (auth.refreshToken.expires.valueOf() > Date.now()) {
-			console.log("hi");
-			const refreshURL = new URL(globalThis.location.origin + '/api/refreshToken');
-			refreshURL.searchParams.set('refresh', auth.refreshToken.data);
-			const refreshRes = (await fetch(refreshURL)
-				.then((res) => res.json())
-				.catch((err) => {
-					throw "couldn't refresh token: " + err;
-				})) as apiOutput;
-			authStore.setWithLocalStorage(refreshRes);
+		if (refreshing != undefined) {
+			return(await refreshing);
 		} else {
-			throw 'refresh token expired';
+			refreshing = refresh();
+			return(await refreshing.then((res) => {refreshing = undefined; return res;}));
 		}
 	}
 	return auth;
 }
 
 export async function fetchWithAuth(input: RequestInfo, init?: RequestInit): Promise<Response> {
-	const auth = await getAuth().catch(() => {authStore.setWithLocalStorage(null)});
+	const auth = await getAuth().catch((e) => {
+		authStore.setWithLocalStorage(null);
+	});
 	if (auth != undefined) {
 		const modifiedInit = {
 			...init,

@@ -3,7 +3,8 @@ import { error } from '@sveltejs/kit';
 import { githubAuthTypeChecker, githubAuthErrorTypeChecker } from '$lib/util/zod';
 import type { githubAuthError } from '$lib/util/zod';
 import type { auth } from '$lib/util/authClient';
-import { CLIENT_ID, CLIENT_SECRET } from "$env/static/private";
+import { CLIENT_SECRET } from "$env/static/private";
+import { PUBLIC_CLIENT_ID } from '$env/static/public';
 
 export const load = (async ({ url }): Promise<auth> => {
 	const code = url.searchParams.get('code');
@@ -12,7 +13,7 @@ export const load = (async ({ url }): Promise<auth> => {
 	}
 	const oauthURL = new URL('https://github.com/login/oauth/access_token');
 
-	oauthURL.searchParams.set('client_id', CLIENT_ID);
+	oauthURL.searchParams.set('client_id', PUBLIC_CLIENT_ID);
 	oauthURL.searchParams.set('client_secret', CLIENT_SECRET);
 	oauthURL.searchParams.set('code', code);
 

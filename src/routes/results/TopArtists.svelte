@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { artist } from "../parseWorker";
+	import type { artist } from "$lib/util/zod";
 
     export let artists: artist[];
 </script>

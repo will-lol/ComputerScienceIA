@@ -1,22 +1,22 @@
 <script lang="ts">
 	import Button from './Button.svelte';
-	import { fetchWithAuth } from '$lib/util/auth';
+	import { fetchWithAuth } from '$lib/util/authClient';
 	import { authStore } from '$lib/util/stores';
 	import type { githubUser } from '$lib/util/zod';
-	import type { auth } from '$lib/util/auth';
-	import { pageDataStore } from '$lib/util/stores';
+	import type { auth } from '$lib/util/authClient';
+	import { dataStore } from '$lib/util/stores';
+	import type { dataPackage } from '$lib/util/zod';
+	import AuthLink from './AuthLink.svelte';
+	import { goto } from '$app/navigation';
 
 	let userInfo: githubUser | null;
 	let authFromStore: auth | null;
-	let pageDataFromStore: {
-		clientID?: string;
-		url?: string;
-	};
+	let data: dataPackage | null;
 	authStore.subscribe((val) => {
 		authFromStore = val;
 	});
-	pageDataStore.subscribe((val) => {
-		pageDataFromStore = val;
+	dataStore.subscribe((val) => {
+		data = val;
 	});
 	$: if (authFromStore != null) {
 		console.log('fetching with auth');
@@ -32,16 +32,18 @@
 	}
 </script>
 
-<nav class="z-10 flex p-4 fixed w-full justify-end items-center">
-	{#if authFromStore == null && pageDataFromStore != undefined && pageDataFromStore != undefined && pageDataFromStore.clientID != undefined && pageDataFromStore.url != undefined}
-		<a
-			class="cursor-pointer"
-			href={`https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(
-				pageDataFromStore.clientID
-			)}&redirect_uri=${encodeURIComponent(pageDataFromStore.url)}`}><Button>Login with GitHub</Button></a
-		>
+<nav class="z-10 flex p-4 fixed w-full justify-between items-center">
+	<button on:click={() => goto("/", {replaceState: true})}>
+		Home
+	</button>
+	{#if authFromStore == null}
+		<AuthLink>
+			<Button>Login with GitHub</Button>
+		</AuthLink>
 	{:else if userInfo != null}
-		<div class="mr-4">Logged in as {userInfo?.name}</div>
-		<Button on:click={() => authStore.setWithLocalStorage(null)}>Log out</Button>
+		<div class="flex items-center">
+			<div class="mr-4">Logged in as {userInfo?.name}</div>
+			<Button on:click={() => authStore.setWithLocalStorage(null)}>Log out</Button>	
+		</div>	
 	{/if}
 </nav>

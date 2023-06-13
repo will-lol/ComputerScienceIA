@@ -37,6 +37,7 @@ export type overallStats = {
 
 export type dataPackage = {
 	metadata: metadata;
+	fromServer?: boolean;
 	songs: song[];
 };
 

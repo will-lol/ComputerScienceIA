@@ -10,7 +10,14 @@
     
     onMount(() => {
         authStore.setWithLocalStorage(data);
-        goto('/', { replaceState: false })
+
+        const redirectFromSession = sessionStorage.getItem("redirect");
+        if (redirectFromSession == null) {
+            goto('/', { replaceState: false })
+        } else {
+            const pathname = new URL(redirectFromSession).pathname;
+            goto(pathname, { replaceState: false })
+        }
     })
 </script>
 

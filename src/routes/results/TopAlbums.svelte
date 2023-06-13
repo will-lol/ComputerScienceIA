@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { album } from "../parseWorker";
+	import type { album } from "$lib/util/zod";
 
     export let albums: album[];
 </script>
