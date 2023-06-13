@@ -117,6 +117,7 @@
 			}
 		} else {
 			dataStore.setWithLocalStorage(allData[parseInt(one.value)].data);
+			comparisonDataStore.setWithLocalStorage(null);
 		}
 		goto('/results', { replaceState: false });
 	}
