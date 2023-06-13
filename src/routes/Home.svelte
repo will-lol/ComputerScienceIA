@@ -10,9 +10,9 @@
 	import type { retrieveAllDataApi } from '$lib/util/zod';
 	import { dataStore, comparisonDataStore } from '$lib/util/stores';
 	import { goto } from '$app/navigation';
+	import { allDataFromServerStore } from '$lib/util/stores';
 
 	let uploadXmlUrl = new URL(globalThis.location.origin + '/api/retrieveAllData');
-	let datasParsed: retrieveAllDataApi = [];
 	let buttonState = 'Add an entry';
 	let submitState = 'View';
 	let loading = false;
@@ -25,6 +25,10 @@
 			addEntry(files[0]);
 		}
 	}
+	let allData: retrieveAllDataApi
+	allDataFromServerStore.subscribe((val) => {
+		allData = val;
+	})
 
 	onMount(async () => {
 		loading = true;
@@ -34,10 +38,11 @@
 
 	async function refreshList() {
 		const datasFromServer = await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json());
-		datasParsed = retrieveAllDataApiTypeChecker.parse(datasFromServer);
-		datasParsed.sort((a, b) => {
+		allData = retrieveAllDataApiTypeChecker.parse(datasFromServer);
+		allData.sort((a, b) => {
 			return a.data.metadata.date.valueOf() - b.data.metadata.date.valueOf();
 		});
+		allDataFromServerStore.setWithLocalStorage(allData);
 	}
 
 	async function addEntry(file: File) {
@@ -105,11 +110,11 @@
 			}, 5000)
 			return;
 		}
-		const oneVal = datasParsed[parseInt(one.value)];
+		const oneVal = allData[parseInt(one.value)];
 		oneVal.data.fromServer = true;
 		const two = formData.next();
 		if (two.value) {
-			const twoVal = datasParsed[parseInt(two.value)];
+			const twoVal = allData[parseInt(two.value)];
 			twoVal.data.fromServer = true;
 			if (oneVal.data.metadata.date.valueOf() > twoVal.data.metadata.date.valueOf()) {
 				dataStore.setWithLocalStorage(oneVal.data);
@@ -119,7 +124,7 @@
 				comparisonDataStore.setWithLocalStorage(oneVal.data);
 			}
 		} else {
-			dataStore.setWithLocalStorage(datasParsed[parseInt(one.value)].data);
+			dataStore.setWithLocalStorage(allData[parseInt(one.value)].data);
 		}
 		goto('/results', { replaceState: false });
 	}
@@ -133,7 +138,7 @@
 			{#if loading}
 				<div>Loading<Ellipses /></div>
 			{/if}
-			{#each datasParsed as data, i}
+			{#each allData as data, i}
 				<div class="flex flex-row justify-between">
 					<div>
 						<input
