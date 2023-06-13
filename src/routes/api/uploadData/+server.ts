@@ -2,6 +2,11 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { uploadData } from '$lib/util/db';
 import { isAuthorised } from '$lib/util/authServer';
+import type { Config } from '@sveltejs/adapter-vercel';
+
+export const config: Config = {
+    runtime: 'nodejs18.x'
+};
 
 export const POST = (async ({ request }) => {
     const auth = await isAuthorised(request);

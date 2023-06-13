@@ -2,6 +2,11 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { deleteData } from '$lib/util/db';
 import { isAuthorised } from '$lib/util/authServer';
+import type { Config } from '@sveltejs/adapter-vercel';
+
+export const config: Config = {
+    runtime: 'nodejs18.x'
+};
 
 export const DELETE = (async ({ url, request }) => {
     const idParam = url.searchParams.get("id");
