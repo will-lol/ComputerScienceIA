@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 import type { dataPackage, retrieveAllDataApi } from "$lib/util/zod";
 import { retrieveAllDataApiTypeChecker, dataPackageTypeChecker } from "$lib/util/zod";
+import { invalidateAll } from "$app/navigation";
 import isServer from '$lib/util/isServer';
 import type { auth } from "$lib/util/authClient";
 
@@ -28,6 +29,7 @@ function createAuthStore() {
             set(value);
             if (value == null) {
                 globalThis.localStorage.clear();
+                invalidateAll();
             } else {
                 globalThis.localStorage.setItem("auth", JSON.stringify(value))
             }
