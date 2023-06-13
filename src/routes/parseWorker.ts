@@ -2,44 +2,7 @@ import iTunesXMLLangURL from '$lib/tree-sitter-iTunesXML.wasm?url';
 import TreeSitterWasmURL from '$lib/tree-sitter.wasm?url';
 import Parser from 'web-tree-sitter';
 import { base64 } from 'rfc4648';
-
-type metadata = {
-	date: Date;
-};
-
-export type song = {
-	name: string | undefined;
-	artist: string | undefined;
-	album: string | undefined;
-	genre: string | undefined;
-	time: number | undefined;
-	playCount: number | undefined;
-	skipCount: number | undefined;
-	rating: number | undefined;
-};
-
-export type album = {
-	name: string | undefined;
-	artist: string | undefined;
-	plays: number | undefined;
-};
-
-export type artist = {
-	name: string | undefined;
-	plays: number | undefined;
-};
-
-export type overallStats = {
-	totalSongs: number;
-	totalPlays: number;
-	totalTime: number;
-};
-
-export type dataPackage = {
-	metadata: metadata;
-	fromServer?: boolean;
-	songs: song[];
-};
+import type { dataPackage, song } from '$lib/util/zod';
 
 addEventListener('error', (e) => {
 	throw e
