@@ -1,4 +1,6 @@
 <script lang="ts">
+	import padNum from "$lib/util/padNum";
+
 	export let songAlbum: string;
 	export let songTitle: string;
 	export let songArtist: string;
@@ -65,8 +67,8 @@
                 </div>
             </div>
             <div class="w-full h-full flex content-between items-center justify-between">
-                <div>{Math.trunc(minutesMinutes * 2/3)}:{Math.trunc(minutesSeconds * 2/3)}</div>
-                <div>-{Math.trunc(minutesMinutes * 1/3)}:{Math.trunc(minutesSeconds * 1/3)}</div>
+                <div>{Math.trunc(minutesMinutes * 2/3)}:{padNum(Math.trunc(minutesSeconds * 2/3), 2)}</div>
+                <div>-{Math.trunc(minutesMinutes * 1/3)}:{padNum(Math.trunc(minutesSeconds * 1/3), 2)}</div>
             </div>
         </div>
     </div>

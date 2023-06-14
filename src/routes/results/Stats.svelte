@@ -7,6 +7,7 @@
 	import Song from './Song.svelte';
 	import TopAlbums from './TopAlbums.svelte';
 	import TopArtists from './TopArtists.svelte';
+	import padNum from '$lib/util/padNum';
 	import Overall from './Overall.svelte';
 	import IPod from './iPod.svelte';
 	import Button from '$lib/components/Button.svelte';
