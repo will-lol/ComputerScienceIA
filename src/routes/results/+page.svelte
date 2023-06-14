@@ -52,6 +52,8 @@
 				const res = compareTree.search(song);
 				if (res != undefined) {
 					song.playCount = playCountDefault(song.playCount) - playCountDefault(res.playCount);
+				} else {
+					console.warn("Couldn't find the following in old tree: " + song);
 				}
 			}
 		} 
