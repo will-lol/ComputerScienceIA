@@ -14,7 +14,7 @@ function noise(width: number, height: number) {
             img[index] = rand;
             img[index + 1] = rand;
             img[index + 2] = rand;
-            img[index + 3] = 15;
+            img[index + 3] = 10;
         }
     }
     return img;
