@@ -32,7 +32,7 @@
 	}
 </script>
 
-<nav class="z-10 flex p-4 fixed w-full justify-between items-center">
+<nav class="z-10 flex sm:p-4 pt-4 px-4 sticky top-0 sm:fixed w-full justify-between items-center">
 	<button on:click={() => goto("/", {replaceState: true})}>
 		Home
 	</button>
