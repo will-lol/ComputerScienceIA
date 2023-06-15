@@ -2,6 +2,7 @@ import { createClient } from "@libsql/client/web";
 import { DB_TOKEN } from "$env/static/private";
 import { createObject, getObject, deleteObject } from "$lib/util/s3";
 import { md5 } from "hash-wasm";
+import type { retrieveAllDataApi } from "$lib/util/zod"
 
 const client = createClient({
     url: "libsql://worthy-asgardian-will-lol.turso.io",
@@ -19,7 +20,7 @@ export async function deleteData(id: number) {
     await client.execute({ sql: "delete from DataTable where id = ?", args: [id] });
 }
 
-export async function uploadData(username: string, data: string | Uint8Array | Buffer) {
+export async function uploadData(username: string, data: string | Uint8Array | Buffer, date: Date) {
     const uuid = globalThis.crypto.randomUUID();
     const dataHash = await md5(data);
     const dataAlreadyExists: boolean = await client.execute({ sql: "select * from DataTable where hash = ?", args: [dataHash] }).then((res) => res.rows.length > 0);
@@ -30,13 +31,14 @@ export async function uploadData(username: string, data: string | Uint8Array | B
     if (status != 200) {
         throw "could not upload to s3"
     }
-    await client.execute({ sql: "insert into DataTable (s3key, username, hash) values (?, ?, ?)", args: [uuid, username, dataHash] });
+    await client.execute({ sql: "insert into DataTable (s3key, username, hash, date) values (?, ?, ?, ?)", args: [uuid, username, dataHash, date.valueOf()] });
 }
 
-export async function retreiveData(username: string): Promise<{data: Uint8Array | undefined, id: string}[]> {
-    const dbResults = await client.execute({ sql: "select s3key,id from DataTable where username = ?", args: [username] });
-    const dbResultsMap = await Promise.all(dbResults.rows.map(async (elem) => {
-        return {data: await getObject(elem[0] as string).then((res) => res.Body?.transformToByteArray()), id: elem[1] as string};
-    }));
-    return dbResultsMap;
+export async function retreiveFromDB(username: string): Promise<retrieveAllDataApi> {
+    const dbResults = await client.execute({ sql: "select s3key,id,date from DataTable where username = ?", args: [username] });
+    return dbResults.rows.map((el) => {return {s3Key: el[0] as string, id: el[1] as number, date: new Date(el[2] as number)}})
+}
+
+export async function getFromS3(s3key: string): Promise<string | undefined> {
+    return getObject(s3key).then((res) => res.Body?.transformToString())
 }

@@ -78,9 +78,11 @@ export const dataPackageTypeChecker = z.object({
 });
 export type dataPackage = z.infer<typeof dataPackageTypeChecker>;
 export const retrieveAllDataApiPackage = z.object({
-	data: dataPackageTypeChecker,
+	s3Key: z.string(),
+	date: stringOrDateToDate,
 	id: z.number()
 });
+
 export const retrieveAllDataApiTypeChecker = z.array(retrieveAllDataApiPackage);
 export type retrieveAllDataApi = z.infer<typeof retrieveAllDataApiTypeChecker>;
 

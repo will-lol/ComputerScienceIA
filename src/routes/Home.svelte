@@ -1,22 +1,21 @@
 <script lang="ts">
 	import { fetchWithAuth } from '$lib/util/authClient';
 	import { onMount } from 'svelte';
-	import { retrieveAllDataApiTypeChecker } from '$lib/util/zod';
+	import { retrieveAllDataApiTypeChecker, dataPackageTypeChecker } from '$lib/util/zod';
 	import Button from '$lib/components/Button.svelte';
 	import parseWorkerCreator from './parseWorker?worker';
 	import workerToPromise from '$lib/util/workerToPromise';
 	import Ellipses from '$lib/components/Ellipses.svelte';
-	import type { dataPackage } from '$lib/util/zod';
-	import type { retrieveAllDataApi } from '$lib/util/zod';
+	import type { retrieveAllDataApi, dataPackage } from '$lib/util/zod';
 	import { dataStore, comparisonDataStore } from '$lib/util/stores';
 	import { goto } from '$app/navigation';
 	import { allDataFromServerStore } from '$lib/util/stores';
+	import timeElapsedString from '$lib/util/timeElapsedString';
 
 	let uploadXmlUrl = new URL(globalThis.location.origin + '/api/retrieveAllData');
 	let buttonState = 'Add an entry';
 	let submitState = 'View';
 	let loading = false;
-	let error = false;
 	let files: FileList | undefined;
 	let entryCheckboxes: number[] = [];
 	$: if (files != undefined) {
@@ -25,10 +24,10 @@
 			addEntry(files[0]);
 		}
 	}
-	let allData: retrieveAllDataApi
+	let allData: retrieveAllDataApi;
 	allDataFromServerStore.subscribe((val) => {
 		allData = val;
-	})
+	});
 
 	onMount(async () => {
 		loading = true;
@@ -40,7 +39,7 @@
 		const datasFromServer = await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json());
 		allData = retrieveAllDataApiTypeChecker.parse(datasFromServer);
 		allData.sort((a, b) => {
-			return a.data.metadata.date.valueOf() - b.data.metadata.date.valueOf();
+			return a.date.valueOf() - b.date.valueOf();
 		});
 		allDataFromServerStore.setWithLocalStorage(allData);
 	}
@@ -68,10 +67,8 @@
 			buttonState = 'Add an entry';
 		} else {
 			buttonState = await res.text();
-			error = true;
 			setTimeout(() => {
 				buttonState = 'Add an entry';
-				error = false;
 			}, 5000);
 		}
 	}
@@ -81,12 +78,22 @@
 		if (entryCheckboxes.length > 2) {
 			const currentVal = parseInt(event.currentTarget.value);
 			const lastVal = parseInt(last!.value);
-			entryCheckboxes = [currentVal, 3 - (lastVal + currentVal)]
+			entryCheckboxes = [currentVal, 3 - (lastVal + currentVal)];
 		}
 		last = event.currentTarget;
 	}
 
-	function submitHandler(
+	async function fetchStatistics(s3Key: string) {
+		const url = new URL(globalThis.location.origin + '/api/getFromS3');
+		url.searchParams.set('key', s3Key);
+		return await fetchWithAuth(url.href)
+			.then((res) => res.json().then((res) => dataPackageTypeChecker.parse(res)))
+			.catch(() => {
+				throw 'Statistics sent by server are unexpected.';
+			});
+	}
+
+	async function submitHandler(
 		e: Event & {
 			readonly submitter: HTMLElement | null;
 		} & {
@@ -98,25 +105,42 @@
 		if (!one.value) {
 			submitState = 'Select at least one checkbox';
 			setTimeout(() => {
-				submitState = 'View'
-			}, 5000)
+				submitState = 'View';
+			}, 5000);
 			return;
 		}
-		const oneVal = allData[parseInt(one.value)];
-		oneVal.data.fromServer = true;
+
+		submitState = 'Loading statistics from server';
+		const oneVal = await fetchStatistics(allData[parseInt(one.value)].s3Key).catch((e) => {
+			submitState = e;
+			setTimeout(() => {
+				submitState = 'View';
+			}, 5000);
+			throw e;
+		});
+		oneVal.fromServer = true;
+
 		const two = formData.next();
 		if (two.value) {
-			const twoVal = allData[parseInt(two.value)];
-			twoVal.data.fromServer = true;
-			if (oneVal.data.metadata.date.valueOf() > twoVal.data.metadata.date.valueOf()) {
-				dataStore.setWithLocalStorage(oneVal.data);
-				comparisonDataStore.setWithLocalStorage(twoVal.data);
+			const twoVal = await fetchStatistics(allData[parseInt(two.value)].s3Key).catch((e) => {
+				submitState = e;
+				setTimeout(() => {
+					submitState = 'View';
+				}, 5000);
+				throw e;
+			});
+
+			submitState = 'Redirecting...';
+			twoVal.fromServer = true;
+			if (oneVal.metadata.date.valueOf() > twoVal.metadata.date.valueOf()) {
+				dataStore.setWithLocalStorage(oneVal);
+				comparisonDataStore.setWithLocalStorage(twoVal);
 			} else {
-				dataStore.setWithLocalStorage(twoVal.data);
-				comparisonDataStore.setWithLocalStorage(oneVal.data);
+				dataStore.setWithLocalStorage(twoVal);
+				comparisonDataStore.setWithLocalStorage(oneVal);
 			}
 		} else {
-			dataStore.setWithLocalStorage(allData[parseInt(one.value)].data);
+			dataStore.setWithLocalStorage(oneVal);
 			comparisonDataStore.setWithLocalStorage(null);
 		}
 		goto('/results', { replaceState: false });
@@ -137,14 +161,12 @@
 						<input
 							bind:group={entryCheckboxes}
 							type="checkbox"
-							name={data?.data.metadata.date.toLocaleDateString()}
-							id={data.data.metadata.date.toString()}
+							name={data.date.toLocaleDateString()}
+							id={data.date.toString()}
 							value={i}
 							on:change={checkInput}
 						/>
-						<label for={data.data.metadata.date.toString()}
-							>{data?.data.metadata.date.toLocaleString()}</label
-						>
+						<label for={data.date.toString()}>{data.date.toLocaleString()}</label>
 					</div>
 					<button
 						type="button"
@@ -167,12 +189,21 @@
 					class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
 				>
 					{buttonState}
-					{#if !(buttonState == 'Add an entry' || buttonState == 'Parser error. Try again.' || error)}
+					{#if !(buttonState == 'Add an entry' || buttonState == 'Parser error. Try again.')}
 						<Ellipses />
 					{/if}
 				</label></Button
 			>
-			<Button disabled={entryCheckboxes.length == 0} primary type="submit">{submitState}</Button>
+			<Button disabled={entryCheckboxes.length == 0 || submitState != 'View'} primary type="submit">
+				{submitState}
+				{#if !(submitState == 'View' || submitState == 'Select at least one checkbox' || submitState == 'Statistics sent by server are unexpected.')}
+					<Ellipses />
+				{:else if submitState == 'View'}
+					{#if entryCheckboxes.length == 2} 
+					{timeElapsedString(allData[entryCheckboxes[0]].date, allData[entryCheckboxes[1]].date)}
+					{/if}
+				{/if}
+			</Button>
 		</fieldset>
 	</form>
 </div>

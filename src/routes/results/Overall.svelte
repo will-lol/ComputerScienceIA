@@ -1,7 +1,8 @@
 <script lang="ts">
     export let totalSongs: number;
     export let totalPlays: number;
-    export let totalTime: number
+    export let totalTime: number;
+    export let days: number
 </script>
 
 <div class="min-w-full border border-solid border-gray-300 w-full bg-opacity-75 px-4 py-3 rounded shadow bg-gray-50 text-gray-600">
