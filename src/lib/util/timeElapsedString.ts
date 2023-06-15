@@ -6,7 +6,7 @@ function stringCreator(word: string, count: number): string {
 
 //this function converts a date object into a string describing how long ago it was.
 export default function timeElapsedString(dateOne: Date, dateTwo: Date): string {
-	const seconds = (dateTwo.valueOf() - dateOne.valueOf()) / 1000;
+	const seconds = Math.abs((dateTwo.valueOf() - dateOne.valueOf()) / 1000);
 
 	if (seconds < 60) {
 		return stringCreator('second', Math.floor(seconds));
