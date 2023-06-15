@@ -22,7 +22,7 @@
 		console.log('fetching with auth');
 		fetchWithAuth('https://api.github.com/user').then((res) =>
 			res.json().then((res) => {
-				if (res.name == undefined) {
+				if (res.login == undefined) {
 					userInfo = null;
 				} else {
 					userInfo = res as githubUser;
@@ -42,7 +42,7 @@
 		</AuthLink>
 	{:else if userInfo != null}
 		<div class="flex items-center">
-			<div class="mr-4">Logged in as {userInfo?.name}</div>
+			<div class="mr-4">Logged in as {userInfo?.login}</div>
 			<Button on:click={() => authStore.setWithLocalStorage(null)}>Log out</Button>	
 		</div>	
 	{/if}
