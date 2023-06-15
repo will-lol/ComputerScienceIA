@@ -10,7 +10,7 @@
 
 <a
 	on:click={() => {
-		sessionStorage.setItem('redirect', currentUrl.href);
+		sessionStorage.setItem('redirect', currentUrl.pathname);
 	}}
 	href={`https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(
 		PUBLIC_CLIENT_ID

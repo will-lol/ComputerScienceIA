@@ -15,7 +15,7 @@
         if (redirectFromSession == null) {
             goto('/', { replaceState: false })
         } else {
-            const pathname = new URL(redirectFromSession).pathname;
+            const pathname = new URL(globalThis.location.origin + redirectFromSession).pathname;
             goto(pathname, { replaceState: false })
         }
     })
