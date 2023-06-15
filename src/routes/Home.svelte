@@ -52,6 +52,9 @@
 			data = (await workerToPromise(parseWorker, await file.text())) as dataPackage;
 		} catch {
 			buttonState = 'Parser error. Try again.';
+			setTimeout(() => {
+				buttonState = 'Add an entry'
+			}, 5000)
 			return;
 		}
 
