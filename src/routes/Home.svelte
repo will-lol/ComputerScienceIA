@@ -130,7 +130,7 @@
 				throw e;
 			});
 
-			submitState = 'Redirecting...';
+			submitState = 'Redirecting';
 			twoVal.fromServer = true;
 			if (oneVal.metadata.date.valueOf() > twoVal.metadata.date.valueOf()) {
 				dataStore.setWithLocalStorage(oneVal);
