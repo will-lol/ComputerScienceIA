@@ -29,7 +29,7 @@ function createAuthStore() {
             set(value);
             if (value == null) {
                 globalThis.localStorage.clear();
-                invalidateAll();
+                location.reload();
             } else {
                 globalThis.localStorage.setItem("auth", JSON.stringify(value))
             }
