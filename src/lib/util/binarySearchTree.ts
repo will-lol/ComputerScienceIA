@@ -89,34 +89,37 @@ export default class BinarySearchTree<T> {
 		let num = 0;
 
 		while (num != amount) {
+			//Adding logic
 			if (
-				(currentNode.left == null ||
-					(currentNode.left != null && isVisited[currentNode.left?.id])) &&
-				!isVisited[currentNode.id]
-			) {
-				array[num] = currentNode.data;
-				isVisited[currentNode.id] = true;
-				num++;
+				(currentNode.left == null ||											//left node is null
+					(currentNode.left != null && isVisited[currentNode.left.id])) &&	//or left node is visited
+				!isVisited[currentNode.id]												//and current node isnt visited
+			) {																			//if current node is lowest that hasn't been visited:
+				array[num] = currentNode.data;											//add to array
+				isVisited[currentNode.id] = true;										//set to visited
+				num++;																	//incrememnt num
 			}
 
-			if (currentNode.left != null && !isVisited[currentNode.left.id]) {
-				currentNode = currentNode.left;
-			} else if (currentNode.parent != null &&
+			//Moving logic
+			if (currentNode.left != null && !isVisited[currentNode.left.id]) {			//if left and left not visited	
+				currentNode = currentNode.left;											//go left!
+			} else if (																	
+				currentNode.parent != null &&											//parent and parent not visited and no right node or right node visited
 				!isVisited[currentNode.parent.id] &&
 				(currentNode.right == null || isVisited[currentNode.right.id])
 			) {
-				currentNode = currentNode.parent;
-			} else if (currentNode.right != null && !isVisited[currentNode.right.id]) {
-				currentNode = currentNode.right;
-			} else if (currentNode.parent) {
-				currentNode = currentNode.parent;
+				currentNode = currentNode.parent;										//go parent!
+			} else if (currentNode.right != null && !isVisited[currentNode.right.id]) {	//if right and right not visited
+				currentNode = currentNode.right;										//go right!
+			} else if (currentNode.parent) {											//if parent
+				currentNode = currentNode.parent;										//go parent!
 			}
 		}
 
 		return array;
 	}
 
-	copyTo(newTree: BinarySearchTree<T>)  {
+	copyTo(newTree: BinarySearchTree<T>) {
 		const prevNodeWithRightStack: Node<T>[] = [];
 		let num = 0;
 		if (this.root == null) {

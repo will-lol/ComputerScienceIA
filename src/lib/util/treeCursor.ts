@@ -28,6 +28,7 @@ export default class InOrderTreeCursor<T> {
         let output: T | undefined = undefined;
 
 		while (output == undefined) {
+			//adding logic
 			if (
 				(this.currentNode.left == null ||
 					(this.currentNode.left != null && this.isVisited[this.currentNode.left?.id])) &&
@@ -38,6 +39,7 @@ export default class InOrderTreeCursor<T> {
 				this.currentIndex++;
 			}
 
+			//moving logic
 			if (this.currentNode.left != null && !this.isVisited[this.currentNode.left.id]) {
 				this.currentNode = this.currentNode.left;
 			} else if (this.currentNode.parent != null &&
