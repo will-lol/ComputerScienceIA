@@ -32,7 +32,6 @@
 		let data: dataPackage;
 		try {
 			data = (await workerToPromise(parseWorker, await file.text())) as dataPackage;
-			data.fromServer = false;
 			dataStore.setWithLocalStorage(data);
 			state = 'Parsed. Redirecting';
 			goto('/results', { replaceState: false });
