@@ -37,6 +37,7 @@
 
 	async function refreshList() {
 		const datasFromServer = await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json());
+		console.log(datasFromServer);
 		allData = retrieveAllDataApiTypeChecker.parse(datasFromServer);
 		allData.sort((a, b) => {
 			return a.date.valueOf() - b.date.valueOf();
