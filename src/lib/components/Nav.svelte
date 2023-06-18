@@ -8,6 +8,7 @@
 	import type { dataPackage } from '$lib/util/zod';
 	import AuthLink from './AuthLink.svelte';
 	import { goto } from '$app/navigation';
+	import retry from '$lib/util/retry';
 
 	let userInfo: githubUser | null;
 	let authFromStore: auth | null;
@@ -20,7 +21,7 @@
 	});
 	$: if (authFromStore != null) {
 		console.log('fetching with auth');
-		fetchWithAuth('https://api.github.com/user').then((res) =>
+		retry(() => fetchWithAuth('https://api.github.com/user').then((res) =>
 			res.json().then((res) => {
 				if (res.login == undefined) {
 					userInfo = null;
@@ -28,7 +29,7 @@
 					userInfo = res as githubUser;
 				}
 			})
-		);
+		), 5000, 2);
 	}
 </script>
 
