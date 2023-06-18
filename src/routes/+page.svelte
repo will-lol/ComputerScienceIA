@@ -17,8 +17,8 @@
 	});
 
 	onMount(() => {
-		alreadyLoaded = localStorage.getItem("data") != null;
-	})
+		alreadyLoaded = localStorage.getItem('data') != null;
+	});
 </script>
 
 <Page>
@@ -27,17 +27,17 @@
 		{#if authFromStore == null}
 			<Onboard />
 			{#if alreadyLoaded}
-	<Notification>
-		<button class="hover:underline" on:click={
-			() => goto("/results", {replaceState: false})
-		}>
-			We saved your statistics from last time →
-		</button>
-	</Notification>
-{/if}
+				<Notification>
+					<button
+						class="hover:underline"
+						on:click={() => goto('/results', { replaceState: false })}
+					>
+						We saved your statistics from last time →
+					</button>
+				</Notification>
+			{/if}
 		{:else}
-			<Home/>
+			<Home />
 		{/if}
 	</Content>
-	
 </Page>
