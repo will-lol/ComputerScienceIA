@@ -29,9 +29,6 @@ export default {
           '100%': { opacity: 1 }
         }
       },
-      colors: {
-        'praiseTheSun': '#f4f3d8'
-      },
       aspectRatio: {
         'ipod': '2.4 / 4.1'
       }
