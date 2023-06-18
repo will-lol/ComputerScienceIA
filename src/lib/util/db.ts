@@ -1,11 +1,11 @@
 import { createClient } from "@libsql/client/web";
-import { DB_TOKEN } from "$env/static/private";
+import { DB_TOKEN, DB_URL } from "$env/static/private";
 import { createObject, getObject, deleteObject } from "$lib/util/s3";
 import { md5 } from "hash-wasm";
 import type { retrieveAllDataApi } from "$lib/util/zod"
 
 const client = createClient({
-    url: "libsql://worthy-asgardian-will-lol.turso.io",
+    url: DB_URL,
     authToken: DB_TOKEN
 });
 
