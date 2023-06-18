@@ -12,6 +12,7 @@
 
 	let state = "I've saved the file!";
 	let alreadyLoaded: boolean;
+	let labelFileUpload: HTMLLabelElement;
 
 	let files: FileList | undefined;
 	$: if (files != undefined) {
@@ -51,8 +52,9 @@
 	</OrderedList>
 </div>
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
-<Button disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
+<Button on:click={() => labelFileUpload.click()} disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
 		><label
+			bind:this={labelFileUpload}
 			for="file"
 			class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
 		>

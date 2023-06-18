@@ -18,6 +18,7 @@
 	let submitState = 'View';
 	let loading = false;
 	let files: FileList | undefined;
+	let labelFileUpload: HTMLLabelElement;
 	let entryCheckboxes: number[] = [];
 	$: if (files != undefined) {
 		if (files[0]) {
@@ -180,8 +181,9 @@
 			{/each}
 		</div>
 
-		<Button type="button" disabled={buttonState != 'Add an entry'}
+		<Button on:click={() => labelFileUpload.click()} type="button" disabled={buttonState != 'Add an entry'}
 			><label
+				bind:this={labelFileUpload}
 				for="file"
 				class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
 			>
