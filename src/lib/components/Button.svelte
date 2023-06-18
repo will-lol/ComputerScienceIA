@@ -15,7 +15,7 @@
 		classes.push('relative')
 	}
 	if (small) {
-		classes.push('py-0 px-2 text-xs h-8')
+		classes.push('py-0 px-2 text-xs h-6')
 	} else {
 		classes.push('py-2 px-4 text-sm h-10')
 	}

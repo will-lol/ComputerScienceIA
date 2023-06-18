@@ -55,7 +55,7 @@ export async function getAuth() {
 }
 
 export async function fetchWithAuth(input: RequestInfo, init?: RequestInit): Promise<Response> {
-	const auth = await getAuth().catch((e) => {
+	const auth = await getAuth().catch(() => {
 		authStore.setWithLocalStorage(null);
 	});
 	if (auth != undefined) {

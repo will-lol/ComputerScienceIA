@@ -11,6 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { allDataFromServerStore } from '$lib/util/stores';
 	import timeElapsedString from '$lib/util/timeElapsedString';
+	import retry from '$lib/util/retry';
 
 	let uploadXmlUrl = new URL(globalThis.location.origin + '/api/retrieveAllData');
 	let buttonState = 'Add an entry';
@@ -36,8 +37,7 @@
 	});
 
 	async function refreshList() {
-		const datasFromServer = await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json());
-		console.log(datasFromServer);
+		const datasFromServer = await retry(async () => await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json()), 5000, 2);
 		allData = retrieveAllDataApiTypeChecker.parse(datasFromServer);
 		allData.sort((a, b) => {
 			return a.date.valueOf() - b.date.valueOf();
@@ -148,7 +148,7 @@
 		{#if loading}
 			<div>Loading<Ellipses /></div>
 		{/if}
-		<div class="flex flex-col gap-3">
+		<div class="flex flex-col gap-2">
 			{#each allData as data, i}
 				<div class="flex flex-row justify-between">
 					<div class="flex items-center">
