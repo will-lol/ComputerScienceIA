@@ -31,6 +31,10 @@
 	let state = 'idle';
 	let songArray: song[];
 
+	function songStringify(song: song) {
+		return stringDefault(song.name) + stringDefault(song.album) + stringDefault(song.artist)
+	}
+
 	onMount(() => {
 		if (data == null || data.songs == null) {
 			setTimeout(() => {
@@ -39,7 +43,7 @@
 			return;
 		} else if (comparisonData != null) {
 			const compareTree = new BinarySearchTree((one: song, two: song) => {
-				return stringDefault(two.name).localeCompare(stringDefault(one.name));
+				return songStringify(two).localeCompare(songStringify(one));
 			})
 			for (const song of comparisonData.songs) {
 				compareTree.insert(song);
