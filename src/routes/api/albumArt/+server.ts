@@ -56,15 +56,15 @@ async function releaseQuery(albumName: string, artistName: string) {
 async function getAlbumArtURL(albumName: string, artistName: string) {
 	let albumArtURL: string;
 	try {
-		const albumId = await releaseQuery(albumName, artistName).catch(() => {
-			throw 'album not found';
-		});
-		albumArtURL = await fetchAlbumArtUrl(albumId, 'release').catch(() => {throw 'album not found'});
-	} catch {
 		const albumId = await releaseGroupQuery(albumName, artistName).catch(() => {
 			throw 'album not found';
 		});
 		albumArtURL = await fetchAlbumArtUrl(albumId, 'release-group').catch(() => {throw 'album not found'});
+	} catch {
+		const albumId = await releaseQuery(albumName, artistName).catch(() => {
+			throw 'album not found';
+		});
+		albumArtURL = await fetchAlbumArtUrl(albumId, 'release').catch(() => {throw 'album not found'});
 	}
 	return albumArtURL;
 }
