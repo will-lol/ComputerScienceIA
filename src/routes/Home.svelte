@@ -144,12 +144,12 @@
 
 <form on:submit|preventDefault={submitHandler}>
 	<input id="file" accept=".xml" type="file" class="hidden" bind:files />
-	<fieldset class="flex flex-col gap-3 bg-white border border-solid border-gray-300 shadow rounded p-4">
+	<div class="flex flex-col gap-3 bg-white border border-solid border-gray-300 shadow rounded p-4">
 		<h2 class="text-sm text-gray-600">Choose a saved entry to view it, or choose two to compare between.</h2>
 		{#if loading}
 			<div>Loading<Ellipses /></div>
 		{/if}
-		<div class="flex flex-col gap-2">
+		<fieldset class="flex flex-col gap-2">
 			{#each allData as data, i}
 				<div class="flex flex-row justify-between">
 					<div class="flex items-center">
@@ -179,7 +179,7 @@
 					>Delete</Button>
 				</div>
 			{/each}
-		</div>
+		</fieldset>
 
 		<Button on:click={() => labelFileUpload.click()} type="button" disabled={buttonState != 'Add an entry'}
 			><label
@@ -203,5 +203,5 @@
 				{/if}
 			{/if}
 		</Button>
-	</fieldset>
+	</div>
 </form>
