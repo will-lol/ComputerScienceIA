@@ -40,10 +40,10 @@ export async function retreiveFromDB(username: string): Promise<retrieveAllDataA
     return dbResults.rows.map((el) => {return {s3Key: el[0] as string, id: el[1] as number, date: new Date(el[2] as number)}})
 }
 
-export async function getFromS3(s3key: string): Promise<string> {
+export async function getFromS3(s3key: string): Promise<dataPackage> {
     const byteArray = await getObject(s3key).then((res) => res.Body?.transformToByteArray());
     if (byteArray == undefined) {
         throw 'object from s3 was undefined'
     }
-    return JSON.stringify(fromBinary(byteArray))
+    return fromBinary(byteArray)
 }
