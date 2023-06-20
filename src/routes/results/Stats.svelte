@@ -17,6 +17,7 @@
 	import Button from '$lib/components/Button.svelte';
 
 	export let songs: song[];
+
 	let songCount: number = 0;
 	let topTracks: song[] = Array(10);
 	let trackCursor: InOrderTreeCursor<song>;
@@ -33,8 +34,6 @@
 	function songComparatorPlay(songOne: song, songTwo: song) {
 		return playCountDefault(songTwo.playCount) - playCountDefault(songOne.playCount);
 	}
-	let playTree: BinarySearchTree<song>;
-
 	function albumComparatorPlay(albumOne: album, albumTwo: album) {
 		return playCountDefault(albumTwo.plays) - playCountDefault(albumOne.plays);
 	}
@@ -49,6 +48,8 @@
 	}
 
 	if (!isServer()) {
+		let playTree: BinarySearchTree<song>;
+
 		songCount = songs.length;
 		let numberOfSongsWithRatings = 0;
 		for (const song of songs) {
@@ -115,7 +116,6 @@
 		topArtists = artistPlayTree.inOrderTraverse(5);
 		trackCursor = new InOrderTreeCursor(playTree);
 
-		playTree.inOrderTraverse(10);
 		for (let i = 0; i < topTracks.length; i++) {
 			topTracks[i] = trackCursor.next();
 		}
