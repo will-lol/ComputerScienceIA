@@ -1,8 +1,6 @@
 import type { dataPackage } from './zod';
 import pkg from 'protobufjs';
-import brotliPromise from 'brotli-wasm';
-
-const brotli = await brotliPromise;
+import { compress, decompress } from '$lib/util/brotli/brotli_wasm';
 
 const jsonProtoDef = {
 	nested: {
@@ -83,11 +81,12 @@ const dataPackageParser = pkg.Root.fromJSON(jsonProtoDef).lookupType("main.dataP
 export function toBinary(input: dataPackage): Uint8Array {
     const transformed: any = input;
     transformed.metadata.date = input.metadata.date.valueOf();
-	return brotli.compress(dataPackageParser.encode(dataPackageParser.fromObject(transformed)).finish());
+	const val = dataPackageParser.encode(dataPackageParser.fromObject(transformed)).finish();
+	return compress(val, val.byteLength, 10, 22);
 }
 
 export function fromBinary(input: Uint8Array): dataPackage {
-    const transformed = dataPackageParser.decode(brotli.decompress(input)).toJSON();
+    const transformed = dataPackageParser.decode(decompress(input, input.byteLength)).toJSON();
     transformed.metadata.date = new Date(parseInt(transformed.metadata.date));
 	return transformed as dataPackage;
 }
