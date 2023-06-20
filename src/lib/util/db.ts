@@ -3,6 +3,7 @@ import { DB_TOKEN, DB_URL } from "$env/static/private";
 import { createObject, getObject, deleteObject } from "$lib/util/s3";
 import { md5 } from "hash-wasm";
 import type { retrieveAllDataApi } from "$lib/util/zod"
+import { toBinary, fromBinary } from "$lib/util/binarySerialiserDeserialiser/binarySerialiserDeserialiser";
 
 const client = createClient({
     url: DB_URL,
@@ -20,14 +21,14 @@ export async function deleteData(id: number) {
     await client.execute({ sql: "delete from DataTable where id = ?", args: [id] });
 }
 
-export async function uploadData(username: string, data: string | Uint8Array | Buffer, date: Date) {
+export async function uploadData(username: string, data: string, date: Date) {
     const uuid = globalThis.crypto.randomUUID();
     const dataHash = await md5(data);
     const dataAlreadyExists: boolean = await client.execute({ sql: "select * from DataTable where hash = ?", args: [dataHash] }).then((res) => res.rows.length > 0);
     if (dataAlreadyExists) {
         throw "data already exists"
     }
-    const status = await createObject(uuid, data).then((res) => res.$metadata.httpStatusCode);
+    const status = await createObject(uuid, toBinary(JSON.parse(data))).then((res) => res.$metadata.httpStatusCode);
     if (status != 200) {
         throw "could not upload to s3"
     }
@@ -39,6 +40,10 @@ export async function retreiveFromDB(username: string): Promise<retrieveAllDataA
     return dbResults.rows.map((el) => {return {s3Key: el[0] as string, id: el[1] as number, date: new Date(el[2] as number)}})
 }
 
-export async function getFromS3(s3key: string): Promise<string | undefined> {
-    return getObject(s3key).then((res) => res.Body?.transformToString())
+export async function getFromS3(s3key: string): Promise<string> {
+    const byteArray = await getObject(s3key).then((res) => res.Body?.transformToByteArray());
+    if (byteArray == undefined) {
+        throw 'object from s3 was undefined'
+    }
+    return JSON.stringify(fromBinary(byteArray))
 }
