@@ -23,8 +23,8 @@
 	}
 
 	onMount(() => {
-		alreadyLoaded = localStorage.getItem("data") != null;
-	})
+		alreadyLoaded = localStorage.getItem('data') != null;
+	});
 
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
@@ -51,15 +51,20 @@
 	</OrderedList>
 </div>
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
-<Button on:click={() => labelFileUpload.click()} disabled={state != "I've saved the file!"} fullWidth primary absoluteBottom
-		><label
-			bind:this={labelFileUpload}
-			for="file"
-			class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
-		>
-			{state}
-			{#if state == "Parsing"}
-				<Ellipses />
-			{/if}
-		</label></Button
+<Button
+	on:click={() => labelFileUpload.click()}
+	disabled={state != "I've saved the file!"}
+	fullWidth
+	primary
+	absoluteBottom
+	><label
+		bind:this={labelFileUpload}
+		for="file"
+		class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
+	>
+		{state}
+		{#if state == 'Parsing'}
+			<Ellipses />
+		{/if}
+	</label></Button
 >

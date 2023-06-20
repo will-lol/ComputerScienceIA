@@ -5,12 +5,16 @@ import { base64 } from 'rfc4648';
 import type { dataPackage, song } from '$lib/util/zod';
 
 addEventListener('error', (e) => {
-	throw e
-})
+	throw e;
+});
 
 onmessage = (e) => {
 	const message = e.data as string;
-	parse(message).then((res) => postMessage(res)).catch((err) => {postMessage({error: err})});
+	parse(message)
+		.then((res) => postMessage(res))
+		.catch((err) => {
+			postMessage({ error: err });
+		});
 };
 
 function xmlUnescape(string: string): string {

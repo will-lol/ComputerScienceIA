@@ -5,11 +5,11 @@ import { retreiveFromDB } from '$lib/util/db';
 import type { Config } from '@sveltejs/adapter-vercel';
 
 export const config: Config = {
-    runtime: 'nodejs18.x'
+	runtime: 'nodejs18.x'
 };
 
 export const GET = (async ({ request }) => {
-    const auth = await isAuthorised(request);
+	const auth = await isAuthorised(request);
 	if (auth.authorised) {
 		const data = await retreiveFromDB(auth.username);
 		return json(data);

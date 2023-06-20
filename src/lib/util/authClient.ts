@@ -45,10 +45,13 @@ export async function getAuth() {
 	}
 	if (auth.token.expires.valueOf() < Date.now()) {
 		if (refreshing != undefined) {
-			return(await refreshing);
+			return await refreshing;
 		} else {
 			refreshing = refresh();
-			return(await refreshing.then((res) => {refreshing = undefined; return res;}));
+			return await refreshing.then((res) => {
+				refreshing = undefined;
+				return res;
+			});
 		}
 	}
 	return auth;

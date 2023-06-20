@@ -1,13 +1,17 @@
 <script lang="ts">
 	import type { dataPackage, song, album, artist, overallStats } from '$lib/util/zod';
-	import { stringDefault, playCountDefault, durationDefault, ratingDefault } from '$lib/util/defaultType'
+	import {
+		stringDefault,
+		playCountDefault,
+		durationDefault,
+		ratingDefault
+	} from '$lib/util/defaultType';
 	import isServer from '$lib/util/isServer';
 	import BinarySearchTree from '$lib/util/binarySearchTree';
 	import InOrderTreeCursor from '$lib/util/treeCursor';
 	import Song from './Song.svelte';
 	import TopAlbums from './TopAlbums.svelte';
 	import TopArtists from './TopArtists.svelte';
-	import padNum from '$lib/util/padNum';
 	import Overall from './Overall.svelte';
 	import IPod from './iPod.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -21,7 +25,10 @@
 	let overall: overallStats = { totalPlays: 0, totalTime: 0, totalSongs: 0 };
 
 	function songComparatorRating(songOne: song, songTwo: song) {
-		return playCountDefault(songTwo.playCount) * ratingDefault(songTwo.rating) - playCountDefault(songOne.playCount) * ratingDefault(songOne.rating);
+		return (
+			playCountDefault(songTwo.playCount) * ratingDefault(songTwo.rating) -
+			playCountDefault(songOne.playCount) * ratingDefault(songOne.rating)
+		);
 	}
 	function songComparatorPlay(songOne: song, songTwo: song) {
 		return playCountDefault(songTwo.playCount) - playCountDefault(songOne.playCount);
@@ -145,12 +152,15 @@
 					/>
 				{/each}
 			{/if}
-			<Button transparent on:click={() => {
-				for (let i = 0; i < 10; i ++) {
-					topTracks.push(trackCursor.next())
-				}
-				topTracks = topTracks;
-			}} >Show more</Button>
+			<Button
+				transparent
+				on:click={() => {
+					for (let i = 0; i < 10; i++) {
+						topTracks.push(trackCursor.next());
+					}
+					topTracks = topTracks;
+				}}>Show more</Button
+			>
 		</div>
 	</div>
 	<div class="flex flex-col gap-2">

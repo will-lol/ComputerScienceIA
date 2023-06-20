@@ -22,71 +22,71 @@ const jsonProtoDef = {
 				song: {
 					fields: {
 						name: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'string',
 							id: 1
 						},
 						artist: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'string',
 							id: 2
 						},
 						album: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'string',
 							id: 3
 						},
 						genre: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'string',
 							id: 4
 						},
 						time: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'int32',
 							id: 5
 						},
 						playCount: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'int32',
 							id: 6
 						},
 						skipCount: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'int32',
 							id: 7
 						},
 						rating: {
-                            rule: 'optional',
+							rule: 'optional',
 							type: 'int32',
 							id: 8
 						}
 					}
 				},
-                metadata: {
-                    fields: {
-                        date: {
-                            type: 'uint64',
-                            id: 1
-                        }
-                    }
-                }
-			},
+				metadata: {
+					fields: {
+						date: {
+							type: 'uint64',
+							id: 1
+						}
+					}
+				}
+			}
 		}
 	}
 };
 
-const dataPackageParser = pkg.Root.fromJSON(jsonProtoDef).lookupType("main.dataPackage");
+const dataPackageParser = pkg.Root.fromJSON(jsonProtoDef).lookupType('main.dataPackage');
 
 export function toBinary(input: dataPackage): Uint8Array {
-    const transformed: any = input;
-    transformed.metadata.date = input.metadata.date.valueOf();
+	const transformed: any = input;
+	transformed.metadata.date = input.metadata.date.valueOf();
 	const val = dataPackageParser.encode(dataPackageParser.fromObject(transformed)).finish();
 	return compress(val, val.byteLength, 10, 22);
 }
 
 export function fromBinary(input: Uint8Array): dataPackage {
-    const transformed = dataPackageParser.decode(decompress(input, input.byteLength)).toJSON();
-    transformed.metadata.date = new Date(parseInt(transformed.metadata.date));
+	const transformed = dataPackageParser.decode(decompress(input, input.byteLength)).toJSON();
+	transformed.metadata.date = new Date(parseInt(transformed.metadata.date));
 	return transformed as dataPackage;
 }

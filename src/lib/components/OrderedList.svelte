@@ -1,3 +1,3 @@
 <ol class="[counter-reset:list]">
-    <slot></slot>
+	<slot />
 </ol>

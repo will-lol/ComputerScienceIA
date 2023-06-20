@@ -21,22 +21,25 @@
 	});
 	$: if (authFromStore != null) {
 		console.log('fetching with auth');
-		retry(() => fetchWithAuth('https://api.github.com/user').then((res) =>
-			res.json().then((res) => {
-				if (res.login == undefined) {
-					userInfo = null;
-				} else {
-					userInfo = res as githubUser;
-				}
-			})
-		), 5000, 2);
+		retry(
+			() =>
+				fetchWithAuth('https://api.github.com/user').then((res) =>
+					res.json().then((res) => {
+						if (res.login == undefined) {
+							userInfo = null;
+						} else {
+							userInfo = res as githubUser;
+						}
+					})
+				),
+			5000,
+			2
+		);
 	}
 </script>
 
 <nav class="z-10 flex sm:p-4 pt-4 px-4 sticky top-0 sm:fixed w-full justify-between items-center">
-	<button on:click={() => goto("/", {replaceState: true})}>
-		Home
-	</button>
+	<button on:click={() => goto('/', { replaceState: true })}> Home </button>
 	{#if authFromStore == null}
 		<AuthLink>
 			<Button>Login with GitHub</Button>
@@ -44,7 +47,7 @@
 	{:else if userInfo != null}
 		<div class="flex items-center">
 			<div class="mr-4">Logged in as {userInfo?.login}</div>
-			<Button on:click={() => authStore.setWithLocalStorage(null)}>Log out</Button>	
-		</div>	
+			<Button on:click={() => authStore.setWithLocalStorage(null)}>Log out</Button>
+		</div>
 	{/if}
 </nav>

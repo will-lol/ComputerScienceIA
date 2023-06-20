@@ -14,8 +14,8 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import BinarySearchTree from '$lib/util/binarySearchTree';
-	import { stringDefault, playCountDefault } from "$lib/util/defaultType";
-	
+	import { stringDefault, playCountDefault } from '$lib/util/defaultType';
+
 	let authFromStore: auth | null;
 	authStore.subscribe((val) => {
 		authFromStore = val;
@@ -32,24 +32,24 @@
 	let songArray: song[];
 
 	function songStringify(song: song) {
-		return stringDefault(song.name) + stringDefault(song.album) + stringDefault(song.artist)
+		return stringDefault(song.name) + stringDefault(song.album) + stringDefault(song.artist);
 	}
 
 	onMount(() => {
 		if (data == null || data.songs == null) {
 			setTimeout(() => {
 				goto('/', { replaceState: false });
-			}, 1000)
+			}, 1000);
 			return;
 		} else if (comparisonData != null) {
 			const compareTree = new BinarySearchTree((one: song, two: song) => {
 				return songStringify(two).localeCompare(songStringify(one));
-			})
+			});
 			for (const song of comparisonData.songs) {
 				compareTree.insert(song);
 			}
 			if (!data) {
-				throw 'cannot compare without initial data'
+				throw 'cannot compare without initial data';
 			}
 			dataUnsubscribe();
 			for (const song of data.songs) {
@@ -60,12 +60,12 @@
 					console.warn("Couldn't find the following in old tree: " + JSON.stringify(song));
 				}
 			}
-		} 
+		}
 		songArray = data.songs;
 	});
 </script>
 
-{#if !songArray || !data }
+{#if !songArray || !data}
 	Please add upload some data for display.
 {:else}
 	<Page>

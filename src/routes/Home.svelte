@@ -38,7 +38,11 @@
 	});
 
 	async function refreshList() {
-		const datasFromServer = await retry(async () => await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json()), 5000, 2);
+		const datasFromServer = await retry(
+			async () => await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json()),
+			5000,
+			2
+		);
 		allData = retrieveAllDataApiTypeChecker.parse(datasFromServer);
 		allData.sort((a, b) => {
 			return a.date.valueOf() - b.date.valueOf();
@@ -145,7 +149,9 @@
 <form on:submit|preventDefault={submitHandler}>
 	<input id="file" accept=".xml" type="file" class="hidden" bind:files />
 	<div class="flex flex-col gap-3 bg-white border border-solid border-gray-300 shadow rounded p-4">
-		<h2 class="text-sm text-gray-600">Choose a saved entry to view it, or choose two to compare between.</h2>
+		<h2 class="text-sm text-gray-600">
+			Choose a saved entry to view it, or choose two to compare between.
+		</h2>
 		{#if loading}
 			<div>Loading<Ellipses /></div>
 		{/if}
@@ -157,12 +163,24 @@
 							bind:group={entryCheckboxes}
 							type="checkbox"
 							class="w-5 h-5 mr-2"
-							name={data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+							name={data.date.toLocaleDateString(undefined, {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric'
+							})}
 							id={data.date.toString()}
 							value={i}
 							disabled={!entryCheckboxes.includes(i) && entryCheckboxes.length == 2}
 						/>
-						<label class="" for={data.date.toString()}>{data.date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })}</label>
+						<label class="" for={data.date.toString()}
+							>{data.date.toLocaleDateString(undefined, {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+								hour: 'numeric',
+								minute: 'numeric'
+							})}</label
+						>
 					</div>
 					<Button
 						type="button"
@@ -175,13 +193,16 @@
 							if (res.status == 200) {
 								refreshList();
 							}
-						}}
-					>Delete</Button>
+						}}>Delete</Button
+					>
 				</div>
 			{/each}
 		</fieldset>
 
-		<Button on:click={() => labelFileUpload.click()} type="button" disabled={buttonState != 'Add an entry'}
+		<Button
+			on:click={() => labelFileUpload.click()}
+			type="button"
+			disabled={buttonState != 'Add an entry'}
 			><label
 				bind:this={labelFileUpload}
 				for="file"

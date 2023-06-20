@@ -1,3 +1,3 @@
 export default function isServer() {
-    return typeof process === 'object';
+	return typeof process === 'object';
 }

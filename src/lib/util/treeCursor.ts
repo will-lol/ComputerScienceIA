@@ -1,31 +1,31 @@
-import type BinarySearchTree from "./binarySearchTree";
-import type {Node} from "./binarySearchTree";
+import type BinarySearchTree from './binarySearchTree';
+import type { Node } from './binarySearchTree';
 
 export default class InOrderTreeCursor<T> {
-    private binaryTree: BinarySearchTree<T>;
-    private root: Node<T>;
-    private isVisited: boolean[];
-    private currentIndex: number;
-    private currentNode: Node<T>;
+	private binaryTree: BinarySearchTree<T>;
+	private root: Node<T>;
+	private isVisited: boolean[];
+	private currentIndex: number;
+	private currentNode: Node<T>;
 
-    constructor(binaryTree: BinarySearchTree<T>) {
-        this.binaryTree = binaryTree;
-        const root = binaryTree.getRoot();
-        if (root == null) {
-            throw "cursor only works on non-empty tree"
-        }
-        this.root = root;
-        this.isVisited = new Array(binaryTree.getSize());
-        this.currentIndex = 0;
-        this.currentNode = this.root;
-    }
+	constructor(binaryTree: BinarySearchTree<T>) {
+		this.binaryTree = binaryTree;
+		const root = binaryTree.getRoot();
+		if (root == null) {
+			throw 'cursor only works on non-empty tree';
+		}
+		this.root = root;
+		this.isVisited = new Array(binaryTree.getSize());
+		this.currentIndex = 0;
+		this.currentNode = this.root;
+	}
 
-    next(): T {
+	next(): T {
 		if (this.currentIndex > this.binaryTree.getSize()) {
 			throw 'out of tree bounds';
 		}
 
-        let output: T | undefined = undefined;
+		let output: T | undefined = undefined;
 
 		while (output == undefined) {
 			//adding logic
@@ -42,7 +42,8 @@ export default class InOrderTreeCursor<T> {
 			//moving logic
 			if (this.currentNode.left != null && !this.isVisited[this.currentNode.left.id]) {
 				this.currentNode = this.currentNode.left;
-			} else if (this.currentNode.parent != null &&
+			} else if (
+				this.currentNode.parent != null &&
 				!this.isVisited[this.currentNode.parent.id] &&
 				(this.currentNode.right == null || this.isVisited[this.currentNode.right.id])
 			) {
@@ -55,6 +56,5 @@ export default class InOrderTreeCursor<T> {
 		}
 
 		return output;
-    }
-
+	}
 }

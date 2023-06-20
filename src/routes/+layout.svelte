@@ -112,13 +112,16 @@
 </script>
 
 <svelte:window on:resize={resize} />
-<canvas bind:this={canvas} class="opacity-0 fixed w-[100lvw] h-[100lvh] pointer-events-none -z-10" />
+<canvas
+	bind:this={canvas}
+	class="opacity-0 fixed w-[100lvw] h-[100lvh] pointer-events-none -z-10"
+/>
 <canvas
 	bind:this={noiseOverlay}
 	class="opacity-0 fixed w-[100lvw] h-[100lvh] pointer-events-none z-20"
 />
 
 <div class="font-body">
-	<Nav/>
+	<Nav />
 	<slot />
 </div>
