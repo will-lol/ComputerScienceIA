@@ -1,0 +1,22 @@
+package main;
+syntax = "proto3";
+
+message song {
+    optional string name = 1;
+    optional string artist = 2;
+    optional string album = 3;
+    optional string genre = 4;
+    optional int32 time = 5;
+    optional int32 play_count = 6;
+    optional int32 skip_count = 7;
+    optional int32 rating = 8; 
+}
+
+message metadata {
+    string date = 1;
+}
+
+message dataPackage {
+    metadata metadata = 1;
+    repeated song songs = 2;
+}

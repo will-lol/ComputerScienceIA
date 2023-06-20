@@ -42,6 +42,7 @@
 		"@libsql/client": "^0.1.6",
 		"comlink": "^4.4.1",
 		"hash-wasm": "^4.9.0",
+		"protobufjs": "^7.2.3",
 		"rfc4648": "^1.5.2",
 		"simplex-noise": "^4.0.1",
 		"web-tree-sitter": "^0.20.8",
