@@ -2,8 +2,8 @@ import { createClient } from "@libsql/client/web";
 import { DB_TOKEN, DB_URL } from "$env/static/private";
 import { createObject, getObject, deleteObject } from "$lib/util/s3";
 import { md5 } from "hash-wasm";
-import type { retrieveAllDataApi } from "$lib/util/zod"
-import { toBinary, fromBinary } from "$lib/util/binarySerialiserDeserialiser/binarySerialiserDeserialiser";
+import type { dataPackage, retrieveAllDataApi } from "$lib/util/zod"
+import { toBinary, fromBinary } from "$lib/util/binarySerialiserDeserialiser";
 
 const client = createClient({
     url: DB_URL,
@@ -21,14 +21,14 @@ export async function deleteData(id: number) {
     await client.execute({ sql: "delete from DataTable where id = ?", args: [id] });
 }
 
-export async function uploadData(username: string, data: string, date: Date) {
+export async function uploadData(username: string, data: dataPackage, date: Date) {
     const uuid = globalThis.crypto.randomUUID();
-    const dataHash = await md5(data);
+    const dataHash = await md5(JSON.stringify(data));
     const dataAlreadyExists: boolean = await client.execute({ sql: "select * from DataTable where hash = ?", args: [dataHash] }).then((res) => res.rows.length > 0);
     if (dataAlreadyExists) {
         throw "data already exists"
     }
-    const status = await createObject(uuid, toBinary(JSON.parse(data))).then((res) => res.$metadata.httpStatusCode);
+    const status = await createObject(uuid, toBinary(data)).then((res) => res.$metadata.httpStatusCode);
     if (status != 200) {
         throw "could not upload to s3"
     }

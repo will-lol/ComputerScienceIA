@@ -1,4 +1,4 @@
-import type { dataPackage } from '../zod';
+import type { dataPackage } from './zod';
 import * as protobuf from 'protobufjs';
 
 const jsonProtoDef = {
@@ -45,12 +45,12 @@ const jsonProtoDef = {
 							type: 'int32',
 							id: 5
 						},
-						play_count: {
+						playCount: {
                             rule: 'optional',
 							type: 'int32',
 							id: 6
 						},
-						skip_count: {
+						skipCount: {
                             rule: 'optional',
 							type: 'int32',
 							id: 7
@@ -78,10 +78,8 @@ const jsonProtoDef = {
 const dataPackageParser = protobuf.Root.fromJSON(jsonProtoDef).lookupType("main.dataPackage");
 
 export function toBinary(input: dataPackage): Uint8Array {
-    console.log(input);
     const transformed: any = input;
     transformed.metadata.date = input.metadata.date.valueOf();
-    console.log(input.metadata.date.valueOf())
 	return dataPackageParser.encode(dataPackageParser.fromObject(transformed)).finish();
 }
 

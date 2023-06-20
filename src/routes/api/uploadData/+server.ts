@@ -18,7 +18,7 @@ export const POST = (async ({ request }) => {
         } 
         const date = data.data.metadata.date;
         const encoder = new TextEncoder();
-        await uploadData(auth.username, encoder.encode(JSON.stringify(data.data)), date).catch((e) => {if (e == "data not found") {throw error(406, e)} else {throw error(500, e)}});
+        await uploadData(auth.username, data.data, date).catch((e) => {if (e == "data not found") {throw error(406, e)} else {throw error(500, e)}});
         return new Response(null, {status: 200});    
     } else {
         throw error(401)
