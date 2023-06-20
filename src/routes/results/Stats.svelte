@@ -37,11 +37,17 @@
 	function albumComparatorPlay(albumOne: album, albumTwo: album) {
 		return playCountDefault(albumTwo.plays) - playCountDefault(albumOne.plays);
 	}
-	function albumComparatorName(albumOne: album, albumTwo: album) {
-		return stringDefault(albumTwo.name).localeCompare(stringDefault(albumOne.name));
+	function albumStringifier(album: album) {
+		return stringDefault(album.name) +  stringDefault(album.artist);
 	}
-	function artistComparatorName(artistOne: artist, artistTwo: artist) {
-		return stringDefault(artistOne.name).localeCompare(stringDefault(artistTwo.name));
+	function albumComparator(albumOne: album, albumTwo: album) {
+		return albumStringifier(albumTwo).localeCompare(albumStringifier(albumOne));
+	}
+	function artistStringifier(artist: artist) {
+		return stringDefault(artist.name)
+	}
+	function artistComparator(artistOne: artist, artistTwo: artist) {
+		return artistStringifier(artistOne).localeCompare(artistStringifier(artistTwo));
 	}
 	function artistComparatorPlay(artistOne: artist, artistTwo: artist) {
 		return playCountDefault(artistTwo.plays) - playCountDefault(artistOne.plays);
@@ -64,8 +70,8 @@
 			playTree = new BinarySearchTree(songComparatorPlay);
 		}
 
-		const albumNameTree = new BinarySearchTree(albumComparatorName);
-		const artistNameTree = new BinarySearchTree(artistComparatorName);
+		const albumNameTree = new BinarySearchTree(albumComparator);
+		const artistNameTree = new BinarySearchTree(artistComparator);
 
 		for (const song of songs) {
 			playTree.insert(song);
@@ -82,7 +88,7 @@
 			const albumSearchResult = albumNameTree.search({
 				name: song.album,
 				plays: undefined,
-				artist: undefined
+				artist: song.artist
 			});
 			if (albumSearchResult != undefined) {
 				if (song.playCount) {
