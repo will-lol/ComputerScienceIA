@@ -1,5 +1,5 @@
 import type { dataPackage } from './zod';
-import * as protobuf from 'protobufjs';
+import pkg from 'protobufjs';
 
 const jsonProtoDef = {
 	nested: {
@@ -75,7 +75,7 @@ const jsonProtoDef = {
 	}
 };
 
-const dataPackageParser = protobuf.Root.fromJSON(jsonProtoDef).lookupType("main.dataPackage");
+const dataPackageParser = pkg.Root.fromJSON(jsonProtoDef).lookupType("main.dataPackage");
 
 export function toBinary(input: dataPackage): Uint8Array {
     const transformed: any = input;
