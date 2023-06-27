@@ -1,3 +1,4 @@
+//generated using https://github.com/rustwasm/wasm-bindgen
 /* tslint:disable */
 /* eslint-disable */
 /**

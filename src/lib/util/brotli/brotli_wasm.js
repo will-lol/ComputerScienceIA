@@ -1,3 +1,4 @@
+//generated using https://github.com/rustwasm/wasm-bindgen
 import * as wasm from './brotli_wasm_bg.wasm';
 import { __wbg_set_wasm } from './brotli_wasm_bg.js';
 __wbg_set_wasm(wasm);

@@ -123,6 +123,12 @@ export default class BinarySearchTree<T> {
 		return array;
 	}
 
+	from(array: T[]) {
+		for (const item of array) {
+			this.insert(item);
+		}
+	}
+
 	copyTo(newTree: BinarySearchTree<T>) {
 		const prevNodeWithRightStack: Node<T>[] = [];
 		let num = 0;

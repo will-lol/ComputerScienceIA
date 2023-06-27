@@ -1,38 +1,30 @@
-# create-svelte
+# iPod Listening Statistics (Computer Science IA)
+## Maintaining this project
+The project depends on a number of environment variables. 
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+1. PUBLIC_CLIENT_ID
+2. CLIENT_SECRET
+3. DB_TOKEN
+4. DB_URL
+5. AWS_ACCESS_KEY_ID
+6. AWS_SECRET_ACCESS_KEY
+7. S3_BUCKET_ID
+8. S3_REGION
 
-## Creating a project
+All of the environment variables must be present in a `.env` file in order for the project to work.
 
-If you're seeing this, you've probably already done this step. Congrats!
+### PUBLIC_CLIENT_ID, CLIENT_SECRET
+You must [create a GitHub app](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app). The PUBLIC_CLIENT_ID is listed as the 'Client ID' in the GitHub app setting page. Client secrets may also be generated here.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### DB_TOKEN, DB_URL
+The DB_TOKEN and DB_URL may be any libsql token and URL. The URL is in the following format:
+`DB_URL="libsql://*.*"`
+I used the [Turso](https://turso.tech/) database, this one will work well. 
+You may execute the following SQL command to generate the required table:
+`CREATE TABLE DataTable(id INTEGER PRIMARY KEY, s3key STRING, username STRING, hash STRING, date INTEGER);`
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+### S3_BUCKET_ID, S3_REGION
+These credentials are related to AWS S3. To create these credentials, create an AWS S3 Bucket and obtain these variables from the [AWS S3 Dashboard](https://s3.console.aws.amazon.com/s3/home). The ID is your bucket's name, the region is the bucket's AWS region. 
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+### AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+These tokens are used to access an S3 bucket. You must create an AWS S3 bucket, and then an AWS IAM user to obtain these credentials. Once an S3 bucket has been created, use the IAM console to create a new IAM user and IAM user group. Use the AWS console to create a user. When prompted for permissions, create a new AWS user group with the `AmazonS3FullAccess` policy. Once the user has been created, head to its dashboard and go to the `Security Credentials` tab. Create a new access key and select `Application running outside AWS`. The key ID and secret access key will now be visible./

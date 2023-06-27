@@ -50,20 +50,20 @@ async function parse(string: string): Promise<dataPackage> {
 	iTunesXMLParser.setLanguage(iTunesXMLLang);
 	const iTunesXML = string;
 	const tree = iTunesXMLParser.parse(iTunesXML);
-	const dict = tree.rootNode.namedChild(2)?.namedChild(0);
-	const dictCursor = dict?.walk();
-	if (!dictCursor) {
+	const rootDict = tree.rootNode.namedChild(2)?.namedChild(0);
+	const rootDictCursor = rootDict?.walk();
+	if (!rootDictCursor) {
 		throw "Couldn't find root dict";
 	}
+	rootDictCursor.gotoFirstChild();
 
-	dictCursor.gotoFirstChild();
-	const dateField = getFieldInDict(dictCursor, 'Date');
+	const dateField = getFieldInDict(rootDictCursor, 'Date');
 	if (dateField == null) {
 		throw "Couldn't find date";
 	}
 	const date = getAndParseKeyValue<Date>(dateField);
 
-	const tracksDict = getFieldInDict(dictCursor, 'Tracks');
+	const tracksDict = getFieldInDict(rootDictCursor, 'Tracks');
 	if (tracksDict == null) {
 		throw "Couldn't find tracks";
 	}

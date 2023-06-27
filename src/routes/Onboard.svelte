@@ -35,8 +35,8 @@
 			dataStore.setWithLocalStorage(data);
 			state = 'Parsed. Redirecting';
 			goto('/results', { replaceState: false });
-		} catch {
-			state = 'Parser error. Try reloading this page and exporting and adding the XML file again.';
+		} catch (e) {
+			state = `Parser error (${JSON.stringify(e)}). Try reloading this page and exporting and adding the XML file again.`;
 		}
 	}
 </script>

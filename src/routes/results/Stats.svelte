@@ -92,8 +92,7 @@
 			});
 			if (albumSearchResult != undefined) {
 				if (song.playCount) {
-					albumSearchResult.plays =
-						(albumSearchResult.plays != undefined ? albumSearchResult.plays : 0) + song.playCount;
+					albumSearchResult.plays = playCountDefault(albumSearchResult.plays) + song.playCount;
 				}
 			} else {
 				const albumObj = { name: song.album, artist: song.artist, plays: song.playCount };
@@ -103,8 +102,7 @@
 			const artistSearchResult = artistNameTree.search({ name: song.artist, plays: undefined });
 			if (artistSearchResult != undefined) {
 				if (song.playCount) {
-					artistSearchResult.plays =
-						(artistSearchResult.plays != undefined ? artistSearchResult.plays : 0) + song.playCount;
+					artistSearchResult.plays = playCountDefault(artistSearchResult.plays) + song.playCount;
 				}
 			} else {
 				const artistObj = { name: song.artist, plays: song.playCount };
