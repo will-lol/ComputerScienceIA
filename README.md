@@ -46,4 +46,6 @@ These tokens are used to access an S3 bucket. You must create an AWS S3 bucket, 
 `npm run build` OR `npm run dev` (for dev server) OR `npm run preview` (executing built files) 
 
 ## Project organisation 
-All code is stored in the `src` directory. 
+All code is stored in the `src` directory. Within the `src` directory, the `routes` directory contains all of the routes using folder based routing. This means that the root of the routes folder is the `https://example.com/` route, `routes/results` is `https://example.com/results`. The entrypoints for routes are the `+page.svelte` files. If a `+page.server.ts` file is present, it executes first on the server and the resultant data is passed to the `+page.svelte` file. If a `+server.ts` file is present, the route is a server only (api) route and it won't return HTML. All other files, such as `Home.svelte` are components that are used only once or are specific to the route.
+
+The `lib` directory contains code and other libraries used in code that are not specific to a particular route. `lib/util` contains many abstractions that could be or are used across different routes and files.
