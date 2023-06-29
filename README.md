@@ -12,7 +12,7 @@ The project depends on a number of environment variables that are *optional* but
 7. S3_BUCKET_ID
 8. S3_REGION
 
-All of the environment variables must be present in a `.env` file in order for the project to work.
+All of the environment variables must be present in a `.env` file in order for the project to work as intended.
 
 #### PUBLIC_CLIENT_ID, CLIENT_SECRET
 You must [create a GitHub app](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app). The PUBLIC_CLIENT_ID is listed as the 'Client ID' in the GitHub app setting page. Client secrets may also be generated here.
@@ -43,7 +43,7 @@ These tokens are used to access an S3 bucket. You must create an AWS S3 bucket, 
 
 `npm install`
 
-`npm run build` OR `npm run dev` (for dev server) OR `npm run preview` (executing built files) 
+`npm run build` (build project) OR `npm run dev` (for development server) OR `npm run preview` (executing built files) 
 
 ## Project organisation 
 All code is stored in the `src` directory. Within the `src` directory, the `routes` directory contains all of the routes using folder based routing. This means that the root of the routes folder is the `https://example.com/` route, `routes/results` is `https://example.com/results`. The entrypoints for routes are the `+page.svelte` files. If a `+page.server.ts` file is present, it executes first on the server and the resultant data is passed to the `+page.svelte` file. If a `+server.ts` file is present, the route is a server only (api) route and it won't return HTML. All other files, such as `Home.svelte` are components that are used only once or are specific to the route.
