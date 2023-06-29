@@ -1,7 +1,7 @@
 # iPod Listening Statistics (Computer Science IA)
 ## Installation
 ### Environment variables
-The project depends on a number of environment variables. 
+The project depends on a number of environment variables that are *optional* but **recommended**. Without these variables, **many features will not work**. 
 
 1. PUBLIC_CLIENT_ID
 2. CLIENT_SECRET
@@ -34,6 +34,9 @@ These credentials are related to AWS S3. To create these credentials, create an 
 These tokens are used to access an S3 bucket. You must create an AWS S3 bucket, and then an AWS IAM user to obtain these credentials. Once an S3 bucket has been created, use the IAM console to create a new IAM user and IAM user group. Use the AWS console to create a user. When prompted for permissions, create a new AWS user group with the `AmazonS3FullAccess` policy. Once the user has been created, head to its dashboard and go to the `Security Credentials` tab. Create a new access key and select `Application running outside AWS`. The key ID and secret access key will now be visible.
 
 ### Installing and executing
+#### Dependencies 
+[NodeJS](https://nodejs.org/en) is required. Version 20.1.0 was used to develop the project, most versions will work fine.
+
 `git clone https://github.com/will-lol/ComputerScienceIA.git`
 
 `cd ComputerScienceIA`
@@ -41,3 +44,6 @@ These tokens are used to access an S3 bucket. You must create an AWS S3 bucket, 
 `npm install`
 
 `npm run build` OR `npm run dev` (for dev server) OR `npm run preview` (executing built files) 
+
+## Project organisation 
+All code is stored in the `src` directory. 
