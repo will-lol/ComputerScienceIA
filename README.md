@@ -1,4 +1,7 @@
 # iPod Listening Statistics (Computer Science IA)
+## Testing
+If you don't have any iTunes sample data, try using the TESTLIBRARY.xml in the root of the project. 
+
 ## Installation
 ### Environment variables
 The project depends on a number of environment variables that are *optional* but **recommended**. Without these variables, **many features will not work**. 
