@@ -10,6 +10,7 @@
 	let simplexWorker: Worker;
 	let noiseWorker: Worker;
 
+	//workers can only be created on client
 	if (!isServer()) {
 		simplexWorker = new simplexWorkerCreator();
 		noiseWorker = new noiseWorkerCreator();
@@ -19,21 +20,16 @@
 	let noiseOverlay: HTMLCanvasElement;
 	let animationController = new AbortController();
 
+	//this onMount is where the background animation functions are called, it runs on client only
 	onMount(async () => {
 		//generate noise overlay
 		renderNoise(noiseOverlay);
 		fadeIn(noiseOverlay);
 
 		//generate simplex noise and animate
-		const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-		reducedMotionQuery.addEventListener('change', async () => {
-			if (reducedMotionQuery.matches) {
-				animationController.abort();
-				renderSimplexNoise(canvas, animationController);
-			}
-		});
+		const animator = new SimplexNoiseAnimator(canvas, animationController);
+		animator.startAnimating();
 
-		await renderSimplexNoise(canvas, animationController);
 		fadeIn(canvas);
 	});
 
@@ -58,20 +54,60 @@
 		ctx.putImageData(img, 0, 0);
 	}
 
-	async function renderSimplexNoise(canvas: HTMLCanvasElement, controller: AbortController) {
-		const boundingClientRect = canvas.getBoundingClientRect();
-		canvas.height = boundingClientRect.height / 20;
-		canvas.width = boundingClientRect.width / 20;
-		const ctx = canvas.getContext('2d')!;
+	class SimplexNoiseAnimator {
+		ctx: CanvasRenderingContext2D;
+		controller: AbortController;
+		canvas: HTMLCanvasElement;
 
-		if (!controller.signal.aborted) {
+		constructor(canvas: HTMLCanvasElement, controller: AbortController) {
+			const boundingClientRect = canvas.getBoundingClientRect();
+
+			this.canvas = canvas;
+			this.controller = controller;
+			this.ctx = canvas.getContext('2d')!;
+
+			canvas.height = boundingClientRect.height / 20;
+			canvas.width = boundingClientRect.width / 20;
+
 			const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-			if (reducedMotionQuery.matches) {
-				controller.abort();
+			reducedMotionQuery.addEventListener('change', async () => {
+				if (reducedMotionQuery.matches) {
+					this.stopAnimating();
+				}
+			});
+
+			if (reducedMotionQuery) {
+				this.stopAnimating();
 			}
 		}
 
-		await frame(ctx, canvas.width, canvas.height, 0, 20, controller.signal);
+		startAnimating() {
+			this.frame(0, 20);
+		}
+
+		stopAnimating() {
+			this.controller.abort();
+		}
+
+		async frame(timeAxis: number, count: number) {
+			if (count == 20 || this.controller.signal.aborted) {
+				const imgData: Promise<Uint8ClampedArray> = workerToPromise(simplexWorker, {
+					width: this.canvas.width,
+					height: this.canvas.height,
+					timeAxis: timeAxis
+				});
+
+				const img = new ImageData(await imgData, this.canvas.width, this.canvas.height);
+
+				timeAxis = timeAxis + 0.01;
+				this.ctx.putImageData(img, 0, 0);
+				count = 0;
+			}
+			if (!this.controller.signal.aborted) {
+				count++;
+				requestAnimationFrame(() => this.frame(timeAxis, count));
+			}
+		}
 	}
 
 	let timeoutID: number;
@@ -81,33 +117,6 @@
 		timeoutID = setTimeout(() => {
 			renderNoise(noiseOverlay);
 		}, 100);
-	}
-
-	async function frame(
-		ctx: CanvasRenderingContext2D,
-		width: number,
-		height: number,
-		timeAxis: number,
-		count: number,
-		signal: AbortSignal
-	) {
-		if (count == 20 || signal.aborted) {
-			const imgData: Promise<Uint8ClampedArray> = workerToPromise(simplexWorker, {
-				width: canvas.width,
-				height: canvas.height,
-				timeAxis: timeAxis
-			});
-
-			const img = new ImageData(await imgData, width, height);
-
-			timeAxis = timeAxis + 0.01;
-			ctx.putImageData(img, 0, 0);
-			count = 0;
-		}
-		if (!signal.aborted) {
-			count++;
-			requestAnimationFrame(() => frame(ctx, width, height, timeAxis, count, signal));
-		}
 	}
 </script>
 
