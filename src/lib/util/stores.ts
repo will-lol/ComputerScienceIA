@@ -2,39 +2,6 @@ import { writable } from 'svelte/store';
 import type { dataPackage, retrieveAllDataApi } from '$lib/util/zod';
 import { retrieveAllDataApiTypeChecker } from '$lib/util/zod';
 import isServer from '$lib/util/isServer';
-import type { auth } from '$lib/util/authClient';
-
-function createAuthStore() {
-	let defaultValue: auth | null;
-	defaultValue = null;
-	if (!isServer()) {
-		const sessionStorageAuthString = globalThis.localStorage.getItem('auth');
-		if (sessionStorageAuthString == null) {
-			defaultValue = null;
-		} else {
-			defaultValue = JSON.parse(sessionStorageAuthString);
-			if (defaultValue) {
-				defaultValue.token.expires = new Date(defaultValue.token.expires);
-				defaultValue.refreshToken.expires = new Date(defaultValue.refreshToken.expires);
-			}
-		}
-	}
-
-	const { subscribe, set } = writable(defaultValue);
-
-	return {
-		subscribe,
-		setWithLocalStorage: (value: auth | null) => {
-			set(value);
-			if (value == null) {
-				globalThis.localStorage.clear();
-				location.reload();
-			} else {
-				globalThis.localStorage.setItem('auth', JSON.stringify(value));
-			}
-		}
-	};
-}
 
 function createDataStore(key: string) {
 	let defaultValue: dataPackage | null = null;
@@ -86,5 +53,4 @@ function createAllDataFromServer(key: string) {
 
 export const dataStore = createDataStore('data');
 export const comparisonDataStore = createDataStore('comparison');
-export const authStore = createAuthStore();
 export const allDataFromServerStore = createAllDataFromServer('all');

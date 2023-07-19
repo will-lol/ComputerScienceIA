@@ -3,9 +3,7 @@
 	import Content from '$lib/components/Content.svelte';
 	import Title from '$lib/components/Title.svelte';
 	import Stats from './Stats.svelte';
-	import { authStore } from '$lib/util/stores';
-	import type { auth } from '$lib/util/authClient';
-	import { fetchWithAuth } from '$lib/util/authClient';
+	import authClient from '$lib/util/authClient';
 	import AuthLink from '$lib/components/AuthLink.svelte';
 	import type { dataPackage, song } from '$lib/util/zod';
 	import { dataStore, comparisonDataStore } from '$lib/util/stores';
@@ -16,10 +14,6 @@
 	import BinarySearchTree from '$lib/util/binarySearchTree';
 	import { stringDefault, playCountDefault } from '$lib/util/defaultType';
 
-	let authFromStore: auth | null;
-	authStore.subscribe((val) => {
-		authFromStore = val;
-	});
 	let data: dataPackage | null;
 	const dataUnsubscribe = dataStore.subscribe((val) => {
 		data = val;
@@ -30,6 +24,7 @@
 	});
 	let state = 'idle';
 	let songArray: song[];
+	const auth = authClient.externalAuth;
 
 	function songStringify(song: song) {
 		return stringDefault(song.name) + stringDefault(song.album) + stringDefault(song.artist);
@@ -73,7 +68,7 @@
 		<Content>
 			<Stats songs={songArray} />
 		</Content>
-		{#if authFromStore == null}
+		{#if $auth == null}
 			<Notification>
 				<AuthLink>
 					<button class="group hover:underline flex items-center">
@@ -81,14 +76,14 @@
 					</button>
 				</AuthLink>
 			</Notification>
-		{:else if authFromStore != null && state != 'completed'}
+		{:else if state != 'completed'}
 			{#if !data.fromServer}
 				<Notification>
 					<button
 						on:click={async () => {
 							let uploadXmlUrl = new URL(globalThis.location.origin + '/api/uploadData');
 							state = 'uploading';
-							const res = await fetchWithAuth(uploadXmlUrl.href, {
+							const res = await authClient.fetchWithAuth(uploadXmlUrl.href, {
 								body: JSON.stringify(data),
 								method: 'POST'
 							});

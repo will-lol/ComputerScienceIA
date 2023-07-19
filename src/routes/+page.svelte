@@ -3,18 +3,15 @@
 	import Content from '$lib/components/Content.svelte';
 	import Title from '$lib/components/Title.svelte';
 	import Onboard from './Onboard.svelte';
-	import type { auth } from '$lib/util/authClient';
-	import { authStore } from '$lib/util/stores';
+	import authClient from '$lib/util/authClient';
 	import Home from './Home.svelte';
 	import Notification from '$lib/components/Notification.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import isServer from '$lib/util/isServer';
 
-	let authFromStore: auth | null;
 	let alreadyLoaded: boolean;
-	authStore.subscribe((val) => {
-		authFromStore = val;
-	});
+	const auth = authClient.externalAuth;
 
 	onMount(() => {
 		alreadyLoaded = localStorage.getItem('data') != null;
@@ -24,7 +21,7 @@
 <Page>
 	<Title>Easily generate iPod listening statistics</Title>
 	<Content>
-		{#if authFromStore == null}
+		{#if $auth == null}
 			<Onboard />
 			{#if alreadyLoaded}
 				<Notification>
@@ -36,7 +33,7 @@
 					</button>
 				</Notification>
 			{/if}
-		{:else}
+		{:else if !isServer()}
 			<Home />
 		{/if}
 	</Content>

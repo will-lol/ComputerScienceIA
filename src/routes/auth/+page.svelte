@@ -5,12 +5,12 @@
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import Ellipses from '$lib/components/Ellipses.svelte';
-	import { authStore } from '$lib/util/stores';
+	import authClient from '$lib/util/authClient';
 	export let data: PageData;
 
 	onMount(() => {
-		authStore.setWithLocalStorage(data);
-
+		authClient.setAuth(data);
+		
 		const redirectFromSession = sessionStorage.getItem('redirect');
 		if (redirectFromSession == null) {
 			goto('/', { replaceState: false });

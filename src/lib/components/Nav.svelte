@@ -1,34 +1,30 @@
 <script lang="ts">
 	import Button from './Button.svelte';
-	import { fetchWithAuth } from '$lib/util/authClient';
-	import { authStore } from '$lib/util/stores';
+	import authClient from '$lib/util/authClient';
 	import type { githubUser } from '$lib/util/zod';
-	import type { auth } from '$lib/util/authClient';
 	import { dataStore } from '$lib/util/stores';
 	import type { dataPackage } from '$lib/util/zod';
 	import AuthLink from './AuthLink.svelte';
 	import { goto } from '$app/navigation';
 	import retry from '$lib/util/retry';
 
-	let userInfo: githubUser | null;
-	let authFromStore: auth | null;
 	let data: dataPackage | null;
-	authStore.subscribe((val) => {
-		authFromStore = val;
-	});
+	const auth = authClient.externalAuth;
+
 	dataStore.subscribe((val) => {
 		data = val;
 	});
-	$: if (authFromStore != null) {
-		console.log('fetching with auth');
-		retry(
+
+	async function getLogin() {
+		return await retry(
 			() =>
-				fetchWithAuth('https://api.github.com/user').then((res) =>
+				authClient.fetchWithAuth('https://api.github.com/user').then((res) =>
 					res.json().then((res) => {
 						if (res.login == undefined) {
-							userInfo = null;
+							return null;
 						} else {
-							userInfo = res as githubUser;
+							const userInfo = res as githubUser;
+							return userInfo;
 						}
 					})
 				),
@@ -40,14 +36,22 @@
 
 <nav class="z-10 flex sm:p-4 pt-4 px-4 sticky top-0 sm:fixed w-full justify-between items-center">
 	<button on:click={() => goto('/', { replaceState: true })}> Home </button>
-	{#if authFromStore == null}
+	{#if $auth == null}
 		<AuthLink>
 			<Button>Login with GitHub</Button>
 		</AuthLink>
-	{:else if userInfo != null}
+	{:else}
 		<div class="flex items-center">
-			<div class="mr-4">Logged in as {userInfo?.login}</div>
-			<Button on:click={() => authStore.setWithLocalStorage(null)}>Log out</Button>
+			{#await getLogin()}
+				<div class="mr-4">Logged in</div>
+				<Button on:click={() => authClient.logout()}>Log out</Button>
+			{:then login}
+				<div class="mr-4">Logged in as {login?.login}</div>
+				<Button on:click={() => authClient.logout()}>Log out</Button>
+			{:catch}
+				<div>Couldn't fetch login information</div>
+				<Button on:click={() => authClient.logout()}>Log out</Button>
+			{/await}
 		</div>
 	{/if}
 </nav>

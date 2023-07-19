@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fetchWithAuth } from '$lib/util/authClient';
+	import authClient from '$lib/util/authClient';
 	import { onMount } from 'svelte';
 	import { retrieveAllDataApiTypeChecker, dataPackageTypeChecker } from '$lib/util/zod';
 	import Button from '$lib/components/Button.svelte';
@@ -39,7 +39,7 @@
 
 	async function refreshList() {
 		const datasFromServer = await retry(
-			async () => await fetchWithAuth(uploadXmlUrl.href).then((res) => res.json()),
+			async () => await authClient.fetchWithAuth(uploadXmlUrl.href).then((res) => res.json()),
 			5000,
 			2
 		);
@@ -66,7 +66,7 @@
 
 		let uploadXmlUrl = new URL(globalThis.location.origin + '/api/uploadData');
 		buttonState = 'Uploading';
-		const res = await fetchWithAuth(uploadXmlUrl.href, {
+		const res = await authClient.fetchWithAuth(uploadXmlUrl.href, {
 			body: JSON.stringify(data),
 			method: 'POST'
 		});
@@ -85,7 +85,7 @@
 	async function fetchStatistics(s3Key: string) {
 		const url = new URL(globalThis.location.origin + '/api/getFromS3');
 		url.searchParams.set('key', s3Key);
-		return await fetchWithAuth(url.href)
+		return await authClient.fetchWithAuth(url.href)
 			.then((res) => res.json().then((res) => dataPackageTypeChecker.parse(res)))
 			.catch(() => {
 				throw 'Statistics sent by server are unexpected.';
@@ -189,7 +189,7 @@
 						on:click={async () => {
 							let deleteUrl = new URL(globalThis.location.origin + '/api/deleteData');
 							deleteUrl.searchParams.set('id', data.id.toString());
-							const res = await fetchWithAuth(deleteUrl.href, { method: 'DELETE' });
+							const res = await authClient.fetchWithAuth(deleteUrl.href, { method: 'DELETE' });
 							if (res.status == 200) {
 								refreshList();
 							}
