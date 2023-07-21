@@ -10,11 +10,11 @@
 	import { onMount } from 'svelte';
 	import isServer from '$lib/util/isServer';
 
-	let alreadyLoaded: boolean;
-	const auth = authClient.externalAuth;
+	let statisticsStoredInLocalStorage: boolean;
+	const auth = authClient.auth;
 
 	onMount(() => {
-		alreadyLoaded = localStorage.getItem('data') != null;
+		statisticsStoredInLocalStorage = localStorage.getItem('data') != null;
 	});
 </script>
 
@@ -23,7 +23,7 @@
 	<Content>
 		{#if $auth == null}
 			<Onboard />
-			{#if alreadyLoaded}
+			{#if statisticsStoredInLocalStorage}
 				<Notification>
 					<button
 						class="hover:underline"

@@ -24,7 +24,7 @@
 	});
 	let state = 'idle';
 	let songArray: song[];
-	const auth = authClient.externalAuth;
+	const auth = authClient.auth;
 
 	function songStringify(song: song) {
 		return stringDefault(song.name) + stringDefault(song.album) + stringDefault(song.artist);
@@ -68,7 +68,7 @@
 		<Content>
 			<Stats songs={songArray} />
 		</Content>
-		{#if $auth == null}
+		{#if $auth == null && !data.fromServer}
 			<Notification>
 				<AuthLink>
 					<button class="group hover:underline flex items-center">

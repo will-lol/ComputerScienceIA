@@ -78,8 +78,18 @@ const jsonProtoDef = {
 
 const dataPackageParser = pkg.Root.fromJSON(jsonProtoDef).lookupType('main.dataPackage');
 
+function removeUseless(input: dataPackage): dataPackage {
+	const output: dataPackage = { metadata: input.metadata, fromServer: input.fromServer, songs: [] };
+	for (const song of input.songs) {
+		if (song.playCount != undefined && song.playCount > 0) {
+			output.songs.push(song)
+		}
+	}
+	return output;
+}
+
 export function toBinary(input: dataPackage): Uint8Array {
-	const transformed: any = input;
+	const transformed: any = removeUseless(input);
 	transformed.metadata.date = input.metadata.date.valueOf();
 	const val = dataPackageParser.encode(dataPackageParser.fromObject(transformed)).finish();
 	return compress(val, val.byteLength, 10, 22);

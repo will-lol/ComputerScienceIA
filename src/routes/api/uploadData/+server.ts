@@ -17,7 +17,6 @@ export const POST = (async ({ request }) => {
 			throw error(400, 'Unexpected data shape');
 		}
 		const date = data.data.metadata.date;
-		const encoder = new TextEncoder();
 		await uploadData(auth.username, data.data, date).catch((e) => {
 			if (e == 'data not found') {
 				throw error(406, e);

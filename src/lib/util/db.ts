@@ -35,7 +35,11 @@ export async function uploadData(username: string, data: dataPackage, date: Date
 	if (dataAlreadyExists) {
 		throw 'data already exists';
 	}
-	const status = await createObject(uuid, toBinary(data)).then(
+	const binariedData = toBinary(data);
+	if (binariedData.length > 200000) {
+		throw 'file too large'
+	}
+	const status = await createObject(uuid, binariedData).then(
 		(res) => res.$metadata.httpStatusCode
 	);
 	if (status != 200) {

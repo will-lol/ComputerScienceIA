@@ -8,35 +8,29 @@
 	import { dataStore } from '$lib/util/stores';
 	import type { dataPackage } from '$lib/util/zod';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 
-	let state = "I've saved the file!";
-	let alreadyLoaded: boolean;
+	let buttonState = "I've saved the file!";
 	let labelFileUpload: HTMLLabelElement;
 
 	let files: FileList | undefined;
 	$: if (files != undefined) {
 		if (files[0]) {
-			state = 'Fetching parser';
+			buttonState = 'Fetching parser';
 			parse(files[0]);
 		}
 	}
 
-	onMount(() => {
-		alreadyLoaded = localStorage.getItem('data') != null;
-	});
-
 	async function parse(file: File) {
 		const parseWorker = new parseWorkerCreator();
-		state = 'Parsing';
+		buttonState = 'Parsing';
 		let data: dataPackage;
 		try {
 			data = (await workerToPromise(parseWorker, await file.text())) as dataPackage;
 			dataStore.setWithLocalStorage(data);
-			state = 'Parsed. Redirecting';
+			buttonState = 'Parsed. Redirecting';
 			goto('/results', { replaceState: false });
 		} catch (e) {
-			state = `Parser error (${JSON.stringify(e)}). Try reloading this page and exporting and adding the XML file again.`;
+			buttonState = `Parser error (${JSON.stringify(e)}). Try reloading this page and exporting and adding the XML file again.`;
 		}
 	}
 </script>
@@ -53,7 +47,7 @@
 <input id="file" accept=".xml" type="file" class="hidden" bind:files />
 <Button
 	on:click={() => labelFileUpload.click()}
-	disabled={state != "I've saved the file!"}
+	disabled={buttonState != "I've saved the file!"}
 	fullWidth
 	primary
 	absoluteBottom
@@ -62,8 +56,8 @@
 		for="file"
 		class="cursor-pointer absolute top-0 left-0 w-full h-full flex justify-center items-center"
 	>
-		{state}
-		{#if state == 'Parsing'}
+		{buttonState}
+		{#if buttonState == 'Parsing'}
 			<Ellipses />
 		{/if}
 	</label></Button

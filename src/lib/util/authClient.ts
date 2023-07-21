@@ -16,8 +16,8 @@ export type auth = {
 };
 
 class ClientAuth {
-	private authStore: Writable<auth | null>;
-	externalAuth: Readable<auth | null>;
+	private authStore: Writable<auth | null>;	//for internal use, the authStore is writable
+	auth: Readable<auth | null>;	//but readonly if it is needed outside of the ClientAuth class
 	private authAccessor: auth | null;
 	private authPromiseWhileRefreshing: Promise<auth> | undefined;
 
@@ -25,8 +25,9 @@ class ClientAuth {
 		this.authStore = writable(null);
 		this.authAccessor = null;
 		this.authStore.subscribe((val) => this.authAccessor = val);
-		this.externalAuth = readonly(this.authStore);
+		this.auth = readonly(this.authStore);
 
+		//fetch the auth from localstorage (if it exists)
 		if (!isServer()) {
 			const sessionStorageAuthString = globalThis.localStorage.getItem('auth');
 			if (sessionStorageAuthString != null) {
@@ -52,7 +53,7 @@ class ClientAuth {
 			throw 'auth must not be null';
 		}
 
-		await this.validateAuth(this.authAccessor)
+		await this.validateAndCorrectAuth(this.authAccessor)
 			.then((res) => this.setAuth(res))
 			.catch(() => this.logout());
 
@@ -75,9 +76,9 @@ class ClientAuth {
 		globalThis.location.reload();
 	}
 
-	private async validateAuth(auth: auth) {
+	private async validateAndCorrectAuth(auth: auth) {
 		if (auth.token.expires.valueOf() < Date.now()) {
-			//Sometimes the validateAuth is called again before the previous call resolved, so check if a refersh has already been sent
+			//Sometimes the fetchWithAuth was called again while a refresh was still in progress, so just check if a refresh is already going
 			if (this.authPromiseWhileRefreshing != undefined) {
 				return await this.authPromiseWhileRefreshing;
 			} else {

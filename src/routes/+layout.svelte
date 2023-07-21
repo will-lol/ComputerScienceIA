@@ -1,66 +1,94 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import simplexWorkerCreator from './simplexWorker?worker';
-	import noiseWorkerCreator from './noiseWorker?worker';
+	import simplexWorker from './simplexWorker?worker';
+	import noiseWorker from './noiseWorker?worker';
 	import workerToPromise from '$lib/util/workerToPromise';
-	import isServer from '$lib/util/isServer';
 	import Nav from '$lib/components/Nav.svelte';
 
-	let simplexWorker: Worker;
-	let noiseWorker: Worker;
-
-	//workers can only be created on client
-	if (!isServer()) {
-		simplexWorker = new simplexWorkerCreator();
-		noiseWorker = new noiseWorkerCreator();
-	}
-
-	let canvas: HTMLCanvasElement;
-	let noiseOverlay: HTMLCanvasElement;
+	let simplexCanvas: HTMLCanvasElement;
+	let simplexAnimator: SimplexNoiseAnimator;
+	let noiseCanvas: HTMLCanvasElement;
+	let noiseRenderer: NoiseRenderer;
+	let resizeHandler: ResizeHandler;
 	let animationController = new AbortController();
 
 	//this onMount is where the background animation functions are called, it runs on client only
 	onMount(async () => {
 		//generate noise overlay
-		renderNoise(noiseOverlay);
-		fadeIn(noiseOverlay);
+		noiseRenderer = new NoiseRenderer(noiseCanvas);
+		noiseRenderer.renderNoise().then(() => fadeInElem(noiseCanvas));
 
 		//generate simplex noise and animate
-		const animator = new SimplexNoiseAnimator(canvas, animationController);
-		animator.startAnimating();
+		simplexAnimator = new SimplexNoiseAnimator(simplexCanvas, animationController);
+		simplexAnimator.startAnimating().then(() => fadeInElem(simplexCanvas));
 
-		fadeIn(canvas);
+		//create resize handler
+		resizeHandler = new ResizeHandler(() => {
+			noiseRenderer.updateSize();
+			noiseRenderer.renderNoise();
+		}, 100);
 	});
 
-	function fadeIn(elem: HTMLElement) {
+	function fadeInElem(elem: HTMLElement) {
 		elem.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1000, fill: 'forwards' });
 	}
 
-	async function renderNoise(canvas: HTMLCanvasElement) {
-		const boundingClientRect = canvas.getBoundingClientRect();
-		const ctx = canvas.getContext('2d')!;
-		noiseOverlay.height = boundingClientRect.height;
-		noiseOverlay.width = boundingClientRect.width;
+	class ResizeHandler {
+		private currentTimeout: number | undefined;
+		private callback: Function;
+		private duration: number;
 
-		let imgData: Promise<Uint8ClampedArray>;
-		let img: ImageData;
+		constructor(callback: Function, timeoutDuration: number) {
+			this.currentTimeout = 0;
+			this.duration = timeoutDuration;
+			this.callback = callback;
+		}
 
-		imgData = workerToPromise(noiseWorker, {
-			width: noiseOverlay.width,
-			height: noiseOverlay.height
-		});
-		img = new ImageData(await imgData, noiseOverlay.width, noiseOverlay.height);
-		ctx.putImageData(img, 0, 0);
+		resizeHandler() {
+			clearTimeout(this.currentTimeout);
+			this.currentTimeout = setTimeout(this.callback, this.duration);
+		}
+	}
+
+	class NoiseRenderer {
+		private canvas: HTMLCanvasElement;
+		private worker: Worker;
+		private ctx: CanvasRenderingContext2D;
+
+		constructor(canvas: HTMLCanvasElement) {
+			this.worker = new noiseWorker();
+			this.canvas = canvas;
+			this.ctx = this.canvas.getContext('2d')!;
+			this.updateSize();
+		}
+
+		updateSize() {
+			const boundingClientRect = this.canvas.getBoundingClientRect();
+			this.canvas.height = boundingClientRect.height;
+			this.canvas.width = boundingClientRect.width;
+		}
+
+		async renderNoise() {
+			let imgData: Promise<Uint8ClampedArray> = workerToPromise(this.worker, {
+				width: this.canvas.width,
+				height: this.canvas.height
+			});
+			let img = new ImageData(await imgData, this.canvas.width, this.canvas.height);
+			this.ctx.putImageData(img, 0, 0);
+		}
 	}
 
 	class SimplexNoiseAnimator {
-		ctx: CanvasRenderingContext2D;
-		controller: AbortController;
-		canvas: HTMLCanvasElement;
+		private ctx: CanvasRenderingContext2D;
+		private controller: AbortController;
+		private canvas: HTMLCanvasElement;
+		private worker: Worker;
 
 		constructor(canvas: HTMLCanvasElement, controller: AbortController) {
 			const boundingClientRect = canvas.getBoundingClientRect();
+
+			this.worker = new simplexWorker();
 
 			this.canvas = canvas;
 			this.controller = controller;
@@ -81,8 +109,8 @@
 			}
 		}
 
-		startAnimating() {
-			this.frame(0, 20);
+		async startAnimating() {
+			await this.frame(0, 20);
 		}
 
 		stopAnimating() {
@@ -91,7 +119,7 @@
 
 		async frame(timeAxis: number, count: number) {
 			if (count == 20 || this.controller.signal.aborted) {
-				const imgData: Promise<Uint8ClampedArray> = workerToPromise(simplexWorker, {
+				const imgData: Promise<Uint8ClampedArray> = workerToPromise(this.worker, {
 					width: this.canvas.width,
 					height: this.canvas.height,
 					timeAxis: timeAxis
@@ -109,24 +137,15 @@
 			}
 		}
 	}
-
-	let timeoutID: number;
-
-	function resize() {
-		clearTimeout(timeoutID);
-		timeoutID = setTimeout(() => {
-			renderNoise(noiseOverlay);
-		}, 100);
-	}
 </script>
 
-<svelte:window on:resize={resize} />
+<svelte:window on:resize={resizeHandler.resizeHandler} />
 <canvas
-	bind:this={canvas}
+	bind:this={simplexCanvas}
 	class="opacity-0 fixed w-[100lvw] h-[100lvh] pointer-events-none -z-10"
 />
 <canvas
-	bind:this={noiseOverlay}
+	bind:this={noiseCanvas}
 	class="opacity-0 fixed w-[100lvw] h-[100lvh] pointer-events-none z-20"
 />
 

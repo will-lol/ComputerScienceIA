@@ -9,7 +9,7 @@
 	import retry from '$lib/util/retry';
 
 	let data: dataPackage | null;
-	const auth = authClient.externalAuth;
+	const auth = authClient.auth;
 
 	dataStore.subscribe((val) => {
 		data = val;
