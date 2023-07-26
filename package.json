@@ -4,8 +4,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "buildAndTest": "vite build\nvite preview&\nsleep 3\nplaywright test"
-	"test": "vite preview&\nsleep 3\nplaywright test",
+    "buildAndTest": "vite build\nvite preview&\nsleep 3\nplaywright test",
+	  "test": "vite preview&\nsleep 3\nplaywright test",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
