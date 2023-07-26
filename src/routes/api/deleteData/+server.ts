@@ -16,7 +16,7 @@ export const DELETE = (async ({ url, request }) => {
 	const id = parseInt(idParam);
 	const auth = await isAuthorised(request);
 	if (auth.authorised) {
-		await deleteData(id);
+		await deleteData(id, auth.username);
 		return new Response(null, { status: 200 });
 	} else {
 		throw error(401);

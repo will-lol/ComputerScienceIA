@@ -79,13 +79,8 @@ const jsonProtoDef = {
 const dataPackageParser = pkg.Root.fromJSON(jsonProtoDef).lookupType('main.dataPackage');
 
 function removeUseless(input: dataPackage): dataPackage {
-	const output: dataPackage = { metadata: input.metadata, fromServer: input.fromServer, songs: [] };
-	for (const song of input.songs) {
-		if (song.playCount != undefined && song.playCount > 0) {
-			output.songs.push(song)
-		}
-	}
-	return output;
+	input.songs = input.songs.filter((song) => song.playCount != undefined && song.playCount > 0);
+	return input;
 }
 
 export function toBinary(input: dataPackage): Uint8Array {

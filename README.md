@@ -1,6 +1,6 @@
 # iPod Listening Statistics (Computer Science IA)
 ## Testing
-If you don't have any iTunes sample data, try using the TESTLIBRARY.xml in the root of the project. 
+If you don't have any iTunes sample data, try using the `test.xml` in the tests folder of the project. 
 
 ## Installation
 ### Environment variables

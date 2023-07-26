@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { dataPackage, song, album, artist, overallStats } from '$lib/util/zod';
+	import type { song, album, artist, overallStats } from '$lib/util/zod';
 	import {
 		stringDefault,
 		playCountDefault,

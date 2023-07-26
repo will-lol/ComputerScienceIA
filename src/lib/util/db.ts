@@ -18,12 +18,15 @@ export async function createUser(username: string) {
 	return output.rows[0];
 }
 
-export async function deleteData(id: number) {
+export async function deleteData(id: number, username: string) {
 	const s3Key = (await client
-		.execute({ sql: 'select s3key from DataTable where id = ?', args: [id] })
-		.then((res) => res.rows[0][0])) as string;
+		.execute({ sql: 'select s3key from DataTable where id = ? and username = ?', args: [id, username] })
+		.then((res) => res.rows[0][0])) as string | undefined;
+	if (s3Key == undefined) {
+		throw "couldn't locate s3key. unauthorised to delete?";
+	}
 	await deleteObject(s3Key);
-	await client.execute({ sql: 'delete from DataTable where id = ?', args: [id] });
+	await client.execute({ sql: 'delete from DataTable where id = ? and username = ?', args: [id, username] });
 }
 
 export async function uploadData(username: string, data: dataPackage, date: Date) {

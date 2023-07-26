@@ -3,6 +3,7 @@ import TreeSitterWasmURL from '$lib/tree-sitter.wasm?url';
 import Parser from 'web-tree-sitter';
 import { base64 } from 'rfc4648';
 import type { dataPackage, song } from '$lib/util/zod';
+import { z } from 'zod';
 
 addEventListener('error', (e) => {
 	throw e;
@@ -61,7 +62,7 @@ async function parse(string: string): Promise<dataPackage> {
 	if (dateField == null) {
 		throw "Couldn't find date";
 	}
-	const date = getAndParseKeyValue<Date>(dateField);
+	const date = getAndParseKeyDate(dateField);
 
 	const tracksDict = getFieldInDict(rootDictCursor, 'Tracks');
 	if (tracksDict == null) {
@@ -96,28 +97,28 @@ async function parse(string: string): Promise<dataPackage> {
 					}
 					switch (keyName) {
 						case 'Name':
-							name = getAndParseKeyValue<string>(dataNode);
+							name = getAndParseKeyString(dataNode);
 							break;
 						case 'Artist':
-							artist = getAndParseKeyValue<string>(dataNode);
+							artist = getAndParseKeyString(dataNode);
 							break;
 						case 'Album':
-							album = getAndParseKeyValue<string>(dataNode);
+							album = getAndParseKeyString(dataNode);
 							break;
 						case 'Genre':
-							genre = getAndParseKeyValue<string>(dataNode);
+							genre = getAndParseKeyString(dataNode);
 							break;
 						case 'Total Time':
-							time = getAndParseKeyValue<number>(dataNode);
+							time = getAndParseKeyNumber(dataNode);
 							break;
 						case 'Play Count':
-							playCount = getAndParseKeyValue<number>(dataNode);
+							playCount = getAndParseKeyNumber(dataNode);
 							break;
 						case 'Skip Count':
-							skipCount = getAndParseKeyValue<number>(dataNode);
+							skipCount = getAndParseKeyNumber(dataNode);
 							break;
 						case 'Rating':
-							rating = getAndParseKeyValue<number>(dataNode);
+							rating = getAndParseKeyNumber(dataNode);
 							break;
 					}
 				}
@@ -137,22 +138,36 @@ async function parse(string: string): Promise<dataPackage> {
 	return { metadata: { date: date }, songs: songs };
 }
 
-function getAndParseKeyValue<T>(node: Parser.SyntaxNode): T {
+function getAndParseKeyString(node: Parser.SyntaxNode): string {
 	const dataNode = node.namedChild(0);
 	if (!dataNode) {
 		throw 'data node not found';
 	}
-	if (dataNode.type == 'text') {
-		return xmlUnescape(dataNode.text) as T;
-	} else if (dataNode.type == 'float' || dataNode.type == 'int') {
-		return parseInt(dataNode.text) as T;
-	} else if (dataNode.type == 'base64') {
-		return base64.parse(dataNode.text) as T;
-	} else if (dataNode.type == 'iso8601') {
-		return new Date(dataNode.text) as T;
-	} else {
-		throw 'unexpected type';
+	return xmlUnescape(dataNode.text);
+}
+
+function getAndParseKeyNumber(node: Parser.SyntaxNode): number {
+	const dataNode = node.namedChild(0);
+	if (!dataNode) {
+		throw 'data node not found';
 	}
+	return parseInt(dataNode.text);
+}
+
+function getAndParseKeyDate(node: Parser.SyntaxNode): Date {
+	const dataNode = node.namedChild(0);
+	if (!dataNode) {
+		throw 'data node not found';
+	}
+	return new Date(dataNode.text);
+}
+
+function getAndParseKeyBinary(node: Parser.SyntaxNode): Uint8Array {
+	const dataNode = node.namedChild(0);
+	if (!dataNode) {
+		throw 'data node not found';
+	}
+	return base64.parse(dataNode.text);
 }
 
 function getKeyName(node: Parser.SyntaxNode) {
