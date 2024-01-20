@@ -63,12 +63,8 @@
 				numberOfSongsWithRatings++;
 			}
 		}
-		const ratingRatio = numberOfSongsWithRatings / songs.length;
-		if (ratingRatio > 0.3) {
-			playTree = new BinarySearchTree(songComparatorRating);
-		} else {
-			playTree = new BinarySearchTree(songComparatorPlay);
-		}
+
+		playTree = new BinarySearchTree(songComparatorPlay);
 
 		const albumNameTree = new BinarySearchTree(albumComparator);
 		const artistNameTree = new BinarySearchTree(artistComparator);
