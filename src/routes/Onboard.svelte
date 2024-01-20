@@ -37,7 +37,7 @@
 
 <div class="sm:my-20">
 	<OrderedList>
-		<ListItem>Open the Apple Music app on your Mac</ListItem>
+		<ListItem>Open the Apple Music or iTunes app on your computer</ListItem>
 		<ListItem>Find the menu bar item 'File'</ListItem>
 		<ListItem>Go to 'Library'</ListItem>
 		<ListItem>Click 'Export Library...'</ListItem>
